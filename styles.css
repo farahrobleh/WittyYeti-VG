@@ -982,18 +982,17 @@ body {
 }
 
 /* User status styles */
-.title-user-status {
-    position: absolute;
-    top: 20px;
-    right: 20px;
-    padding: 10px 15px;
+.user-status {
+    margin: 20px 0;
+    padding: 15px;
     background: rgba(255, 255, 255, 0.1);
-    border-radius: 8px;
+    border-radius: 10px;
     backdrop-filter: blur(10px);
     border: 1px solid rgba(255, 255, 255, 0.2);
-    z-index: 100;
+    text-align: center;
 }
 
+.title-user-status,
 .game-over-user-status,
 .how-to-play-user-status {
     position: absolute;
