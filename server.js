@@ -65,9 +65,16 @@ const SKIN_PRICES = {
 // Initialize database
 const database = new Database();
 
+// Initialize database tables
+database.init().then(() => {
+    console.log('Database tables initialized');
+}).catch(error => {
+    console.error('Failed to initialize database:', error);
+});
+
 // Clean up expired sessions every hour
-setInterval(() => {
-    database.cleanupExpiredSessions();
+setInterval(async () => {
+    await database.cleanupExpiredSessions();
 }, 60 * 60 * 1000);
 
 // Authentication middleware
