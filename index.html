@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Witty Yeti: The Video Game</title>
+    
+    <!-- Cache Control -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="Play as the Witty Yeti in this hilarious endless runner game! Collect gag gifts, avoid obstacles, and run from stuff nobody asked for. Free browser game.">
+    <meta name="keywords" content="Witty Yeti, video game, endless runner, browser game, gag gifts, free game">
+    <meta name="author" content="Witty Yeti Game">
+    
+    <!-- Open Graph Meta Tags for Social Media -->
+    <meta property="og:title" content="Witty Yeti: The Video Game">
+    <meta property="og:description" content="Run with the Yeti, collect gag gifts, and avoid hilarious enemies in this free browser game!">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="">
+    <meta property="og:image" content="">
+    
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Witty Yeti: The Video Game">
+    <meta name="twitter:description" content="The ultimate gift-giving champion runner game! 🎮❄️">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>❄️</text></svg>">
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <script>
+        // Force fresh loading and clear any cached state
+        if (window.performance && window.performance.navigation.type === window.performance.navigation.TYPE_BACK_FORWARD) {
+            window.location.reload();
+        }
+        
+        // Clear any stored game state
+        if (typeof(Storage) !== "undefined") {
+            localStorage.clear();
+            sessionStorage.clear();
+        }
+    </script>
+</head>
+<body>
+    <div class="game-container">
+        <!-- Title Screen -->
+        <div id="titleScreen" class="screen active">
+            <div class="title-content">
+                <div class="logo-container">
+                    <img id="wittyYetiLogo" src="assets/images/ui/witty-yeti-logo.png" alt="Witty Yeti Logo" class="game-logo">
+                </div>
+                <h2 class="game-subtitle">The Video Game</h2>
+                <p class="tagline">Proudly running from stuff nobody asked for</p>
+                
+                <button id="startBtn" class="play-button">START RUNNING</button>
+                <button id="howToPlayBtn" class="secondary-button">HOW TO PLAY</button>
+                <button id="muteBtn" class="mute-button">🔊 MUTE</button>
+                
+                <div class="instructions">
+                    <p><strong>How to Play:</strong></p>
+                    <p>🕹️ Up Arrow, W, or Spacebar to jump</p>
+                    <p>🎁 Collect gag gifts for points</p>
+                    <p>⚠️ Avoid obstacles and enemies</p>
+                    <p>🏃‍♂️ Run as far as you can!</p>
+                </div>
+                
+                <div class="footer">
+                    <p>Created for Witty Yeti - The Gift-Giving Champions</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Game Screen -->
+        <div id="gameScreen" class="screen">
+            <div class="game-header">
+                <div class="score-display">
+                    <span>Score: <span id="score">0</span></span>
+                    <span>Distance: <span id="distance">0.00m</span></span>
+                </div>
+                <div class="gifts-collected">
+                    <span>Gifts: <span id="giftsCollected">0</span></span>
+                </div>
+                <div class="health-display">
+                    <span>Health: </span>
+                    <div class="health-bar-container">
+                        <div id="healthBar" class="health-bar"></div>
+                    </div>
+                </div>
+            </div>
+            
+                        <canvas id="gameCanvas" width="800" height="600"></canvas>
+            
+            <div class="game-controls">
+                <button id="pauseBtn" class="control-button">PAUSE</button>
+                <button id="restartBtn" class="control-button">RESTART</button>
+                <button id="gameBackToMenuBtn" class="control-button">BACK TO MENU</button>
+                <button id="gameMuteBtn" class="mute-button">🔊 MUTE</button>
+            </div>
+        </div>
+
+        <!-- Game Over Screen -->
+        <div id="gameOverScreen" class="screen">
+            <div class="game-over-content">
+                <h2>Game Over!</h2>
+                <div class="final-stats">
+                    <p>Final Score: <span id="finalScore">0</span></p>
+                    <p>Distance Run: <span id="finalDistance">0</span>m</p>
+                    <p>Gifts Collected: <span id="finalGifts">0</span></p>
+                </div>
+                
+                <div class="game-over-message">
+                    <p id="gameOverMessage">Better luck next time, gift-giver!</p>
+                </div>
+                
+                <button id="playAgainBtn" class="play-button">PLAY AGAIN</button>
+                <button id="backToMenuBtn" class="secondary-button">BACK TO MENU</button>
+                <button id="gameOverMuteBtn" class="mute-button">🔊 MUTE</button>
+            </div>
+        </div>
+
+        <!-- How to Play Screen -->
+        <div id="howToPlayScreen" class="screen">
+            <div class="how-to-play-content">
+                <h2>Welcome to Witty Yeti: The Video Game!</h2>
+                
+                <div class="info-section">
+                    <h3>🎮 The Story</h3>
+                    <p>You are the legendary Witty Yeti, the undisputed champion of gift-giving chaos! Every year, you dominate White Elephant gift exchanges with your legendary gag gifts that are so hilarious, they don't just get gifted: they get stolen, fought over in parking lots, and regifted like cursed objects.</p>
+                    <p>But now, the forces of boring gifts have had enough! They're chasing you through the wilderness, trying to stop you from grabbing your next batch of legendary gag gifts. Can you outrun them and prove once again that you're the all-time champion of cheer?</p>
+                </div>
+
+                <div class="info-section">
+                    <h3>🎁 Your Character</h3>
+                    <div class="character-info">
+                        <img src="assets/images/character/yeti-runner.png" alt="Witty Yeti" class="character-preview">
+                        <div>
+                            <h4>The Witty Yeti</h4>
+                            <p><strong>Health:</strong> 10 points</p>
+                            <p><strong>Mission:</strong> Collect gag gifts and outrun the forces of boring presents</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="info-section">
+                    <h3>🎯 Collectibles</h3>
+                    <div class="collectibles-grid">
+                        <div class="collectible-item">
+                            <img src="assets/images/collectibles/gift-box-1.png" alt="Gift Box 1">
+                            <h4>Gift Box 1</h4>
+                            <p><strong>Points:</strong> 1</p>
+                            <p>Basic gag gift - still hilarious!</p>
+                        </div>
+                        <div class="collectible-item">
+                            <img src="assets/images/collectibles/gift-box-2.png" alt="Gift Box 2">
+                            <h4>Gift Box 2</h4>
+                            <p><strong>Points:</strong> 2</p>
+                            <p>Premium gag gift - getting better!</p>
+                        </div>
+                        <div class="collectible-item">
+                            <img src="assets/images/collectibles/gift-box-3.png" alt="Gift Box 3">
+                            <h4>Gift Box 3</h4>
+                            <p><strong>Points:</strong> 3</p>
+                            <p>Legendary gag gift - the best of the best!</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="info-section">
+                    <h3>⚠️ Enemies</h3>
+                    <div class="enemies-grid">
+                        <div class="enemy-item">
+                            <img src="assets/images/enemies/karen-claus.png" alt="Karen Claus">
+                            <h4>Karen Claus</h4>
+                            <p><strong>Damage:</strong> 4 health points</p>
+                            <p><strong>Description:</strong> The ultimate gift-giving nightmare. She's not happy with your "inappropriate" gifts and wants to speak to the manager!</p>
+                        </div>
+                        <div class="enemy-item">
+                            <img src="assets/images/enemies/angry-elf.png" alt="Angry Elf">
+                            <h4>Angry Elf</h4>
+                            <p><strong>Damage:</strong> 3 health points</p>
+                            <p><strong>Description:</strong> This elf has had enough of your "disrespectful" gift choices. He's armed with nerf darts and holiday rage!</p>
+                        </div>
+                        <div class="enemy-item">
+                            <img src="assets/images/enemies/revenge-reindeer.png" alt="Revenge Reindeer">
+                            <h4>Revenge Reindeer</h4>
+                            <p><strong>Damage:</strong> 2 health points</p>
+                            <p><strong>Description:</strong> Rudolph's angry cousin who's tired of your gift-giving shenanigans. He's charging with holiday vengeance!</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="info-section">
+                    <h3>🌲 Obstacles</h3>
+                    <div class="obstacles-grid">
+                        <div class="obstacle-item">
+                            <img src="assets/images/obstacles/tree.png" alt="Tree">
+                            <h4>Tree</h4>
+                            <p><strong>Damage:</strong> 1 health point</p>
+                            <p>Nature's way of saying "slow down, gift-giver!"</p>
+                        </div>
+                        <div class="obstacle-item">
+                            <img src="assets/images/obstacles/rock.png" alt="Rock">
+                            <h4>Rock</h4>
+                            <p><strong>Damage:</strong> 1 health point</p>
+                            <p>Solid as your gift-giving reputation!</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="info-section">
+                    <h3>👑 Boss Battle</h3>
+                    <div class="boss-info">
+                        <img src="assets/images/enemies/boss-johnny.png" alt="Boss Johnny">
+                        <div>
+                            <h4>Boss Johnny (GASP!)</h4>
+                            <p><strong>Trigger:</strong> Appears menacingly after every 50 points you accumulate</p>
+                            <p><strong>Challenge:</strong> Tug-of-war showdown using LEFT ARROW or A key</p>
+                            <p><strong>Reward:</strong> Continue your legendary gift-giving journey</p>
+                            <p><strong>Punishment:</strong> Game over if you lose!</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="info-section">
+                    <h3>🎮 Controls</h3>
+                    <div class="controls-info">
+                        <p><strong>Jump:</strong> Up Arrow, W, or Spacebar</p>
+                        <p><strong>Boss Battle:</strong> LEFT ARROW or A key to tug back</p>
+                        <p><strong>Pause:</strong> Pause button</p>
+                        <p><strong>Mute:</strong> Mute button on any screen</p>
+                    </div>
+                </div>
+
+                <div class="info-section">
+                    <h3>🏆 Scoring</h3>
+                    <ul>
+                        <li>Gift Box 1: 1 point</li>
+                        <li>Gift Box 2: 2 points</li>
+                        <li>Gift Box 3: 3 points</li>
+                        <li>Distance: Increases as you run</li>
+                        <li>Boss Battles: Every 50 points</li>
+                    </ul>
+                </div>
+
+                <div class="info-section">
+                    <h3>🎨 Premium Skins</h3>
+                    <p>Unlock legendary character skins with exclusive bonuses and visual effects!</p>
+                    
+                    <div class="skins-preview-grid">
+                        <div class="skin-preview-item">
+                            <img src="assets/images/character/yeti-runner.png" alt="Classic Yeti" class="skin-preview-img">
+                            <h4>Classic Yeti</h4>
+                            <p><strong>Price:</strong> FREE</p>
+                            <p>The original gift-giving legend</p>
+                        </div>
+                        
+                        <div class="skin-preview-item">
+                            <img src="assets/images/character/yeti-runner.png" alt="Radioactive Yeti" class="skin-preview-img emerald-filter">
+                            <h4>Radioactive Yeti</h4>
+                            <p><strong>Price:</strong> $2.99</p>
+                            <p>☢️ Glowing with nuclear gift-giving power</p>
+                            <p class="skin-benefit">+30% enemy damage resistance!</p>
+                        </div>
+                        
+                        <div class="skin-preview-item">
+                            <img src="assets/images/character/yeti-runner.png" alt="Ninja Yeti" class="skin-preview-img ninja-filter">
+                            <h4>Shadow Ninja Yeti</h4>
+                            <p><strong>Price:</strong> $4.99</p>
+                            <p>🥷 Stealth gift delivery master</p>
+                            <p class="skin-benefit">+25% enemy avoidance!</p>
+                        </div>
+                        
+                        <div class="skin-preview-item">
+                            <img src="assets/images/character/yeti-runner.png" alt="Cosmic Yeti" class="skin-preview-img cosmic-filter">
+                            <h4>Cosmic Yeti</h4>
+                            <p><strong>Price:</strong> $3.99</p>
+                            <p>🚀 Intergalactic champion</p>
+                            <p class="skin-benefit">+20% score multiplier!</p>
+                        </div>
+                        
+                        <div class="skin-preview-item">
+                            <img src="assets/images/character/yeti-runner.png" alt="Royal Yeti" class="skin-preview-img royal-filter">
+                            <h4>Royal Yeti</h4>
+                            <p><strong>Price:</strong> $1.99</p>
+                            <p>👑 Crowned gift-giving monarch</p>
+                            <p class="skin-benefit">+10% health regeneration!</p>
+                        </div>
+                        
+                        <div class="skin-preview-item">
+                            <img src="assets/images/character/yeti-runner.png" alt="Legendary Yeti" class="skin-preview-img legendary-filter">
+                            <h4>Legendary Yeti</h4>
+                            <p><strong>Price:</strong> $4.99</p>
+                            <p>💎 Ultimate gift-giving deity</p>
+                            <p class="skin-benefit">+50% ALL STATS BONUS!</p>
+                        </div>
+                    </div>
+                    
+                    <div class="payment-info-box">
+                        <p>💳 All payments processed securely through Stripe • 🔒 30-day money-back guarantee</p>
+                    </div>
+                </div>
+
+                <button id="backToTitleBtn" class="play-button">BACK TO MENU</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Vertical Game Title Bar -->
+    <div class="game-title-sidebar">
+        <div class="vertical-title">
+            <div class="title-column">
+                <span>W</span>
+                <span>I</span>
+                <span>T</span>
+                <span>T</span>
+                <span>Y</span>
+            </div>
+            <div class="title-column">
+                <span>Y</span>
+                <span>E</span>
+                <span>T</span>
+                <span>I</span>
+            </div>
+            <div class="subtitle-column">
+                <span>T</span>
+                <span>H</span>
+                <span>E</span>
+                <span>&nbsp;</span>
+                <span>V</span>
+                <span>I</span>
+                <span>D</span>
+                <span>E</span>
+                <span>O</span>
+                <span>&nbsp;</span>
+                <span>G</span>
+                <span>A</span>
+                <span>M</span>
+                <span>E</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Skins Store Sidebar (Outside Game Container) -->
+    <div class="skins-store-sidebar">
+        <h3>🎨 PREMIUM SKINS</h3>
+        <p class="store-subtitle">Unlock legendary looks and dominate the gift-giving scene!</p>
+        
+        <div class="skins-grid">
+            <div class="skin-card" data-skin="default">
+                <div class="skin-preview">
+                    <img src="assets/images/character/yeti-runner.png" alt="Classic Yeti">
+                    <div class="skin-badge">FREE</div>
+                </div>
+                <h4>Classic Yeti</h4>
+                <p>The original gift-giving legend</p>
+                <button class="skin-select-btn selected">SELECTED</button>
+            </div>
+            
+                                    <div class="skin-card" data-skin="golden">
+                            <div class="skin-preview">
+                                                            <img src="assets/images/character/yeti-runner.png" alt="Radioactive Yeti" class="emerald-filter">
+                            <div class="skin-badge premium">$2.99</div>
+                            <div class="popular-badge">🔥 POPULAR</div>
+                        </div>
+                        <h4>Radioactive Yeti</h4>
+                        <p>☢️ Glowing with nuclear gift-giving power</p>
+                        <p class="skin-benefit">+30% enemy damage resistance!</p>
+                            <button class="skin-buy-btn" data-price="2.99">BUY NOW</button>
+                        </div>
+            
+            <div class="skin-card" data-skin="ninja">
+                <div class="skin-preview">
+                    <img src="assets/images/character/yeti-runner.png" alt="Ninja Yeti" class="ninja-filter">
+                    <div class="skin-badge premium">$4.99</div>
+                    <div class="rare-badge">⚡ RARE</div>
+                </div>
+                <h4>Shadow Ninja Yeti</h4>
+                <p>🥷 Stealth gift delivery master</p>
+                <p class="skin-benefit">+25% enemy avoidance!</p>
+                <button class="skin-buy-btn" data-price="4.99">BUY NOW</button>
+            </div>
+            
+            <div class="skin-card" data-skin="cosmic">
+                <div class="skin-preview">
+                    <img src="assets/images/character/yeti-runner.png" alt="Cosmic Yeti" class="cosmic-filter">
+                    <div class="skin-badge premium">$3.99</div>
+                    <div class="epic-badge">🌟 EPIC</div>
+                </div>
+                <h4>Cosmic Yeti</h4>
+                <p>🚀 Intergalactic gift-giving champion</p>
+                <p class="skin-benefit">+20% score multiplier!</p>
+                <button class="skin-buy-btn" data-price="3.99">BUY NOW</button>
+            </div>
+            
+            <div class="skin-card" data-skin="royal">
+                <div class="skin-preview">
+                    <img src="assets/images/character/yeti-runner.png" alt="Royal Yeti" class="royal-filter">
+                    <div class="skin-badge premium">$1.99</div>
+                    <div class="limited-badge">👑 LIMITED</div>
+                </div>
+                <h4>Royal Yeti</h4>
+                <p>👑 Crowned gift-giving monarch</p>
+                <p class="skin-benefit">+10% health regeneration!</p>
+                <button class="skin-buy-btn" data-price="1.99">BUY NOW</button>
+            </div>
+            
+            <div class="skin-card" data-skin="legendary">
+                <div class="skin-preview">
+                    <img src="assets/images/character/yeti-runner.png" alt="Legendary Yeti" class="legendary-filter">
+                    <div class="skin-badge premium">$4.99</div>
+                    <div class="legendary-badge">💎 LEGENDARY</div>
+                </div>
+                <h4>Legendary Yeti</h4>
+                <p>💎 The ultimate gift-giving deity</p>
+                <p class="skin-benefit">+50% ALL STATS BONUS!</p>
+                <button class="skin-buy-btn" data-price="4.99">BUY NOW</button>
+            </div>
+        </div>
+        
+        <div class="store-footer">
+            <p>💳 Secure payment via Stripe • 🔒 30-day money-back guarantee</p>
+            <p>🎁 Each skin includes exclusive animations and effects!</p>
+        </div>
+    </div>
+
+    <!-- Audio Permission Dialog -->
+    <div id="audioPermissionModal" class="audio-permission-modal">
+        <div class="audio-permission-content">
+            <h3>🎵 Audio Permission</h3>
+            <p>Would you like to enable background music and sound effects for the best gaming experience?</p>
+            <div class="audio-permission-buttons">
+                <button id="enableAudioBtn" class="enable-audio-btn">YES, ENABLE AUDIO</button>
+                <button id="disableAudioBtn" class="disable-audio-btn">NO, KEEP SILENT</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Payment Modal -->
+    <div id="paymentModal" class="payment-modal">
+        <div class="payment-content">
+            <h3>💳 Purchase Skin</h3>
+            <div class="skin-purchase-info">
+                <div class="skin-preview-small">
+                    <img id="modalSkinImage" src="" alt="Skin Preview" class="modal-skin-img">
+                </div>
+                <div class="skin-details">
+                    <h4 id="modalSkinName">Skin Name</h4>
+                    <p id="modalSkinDescription">Skin Description</p>
+                    <p class="price">$<span id="modalSkinPrice">0.00</span></p>
+                </div>
+            </div>
+            <div id="paypal-button-container"></div>
+            <div class="payment-buttons">
+                <button type="button" class="cancel-btn" onclick="closePaymentModal()">CANCEL</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- PayPal SDK (LIVE MODE) -->
+    <script src="https://www.paypal.com/sdk/js?client-id=Ad28CVMHrm_ArFIxt7GBEqjyM-6z9qmyJgIEF8Jaesg7CDJ1ciylbIh2PyT8hi9GJbv2Fe7A4hUjUxwh&currency=USD"></script>
+    
+    <script src="game.js"></script>
+    <script>
+        // Global function for closing payment modal
+        function closePaymentModal() {
+            if (window.gameInstance) {
+                window.gameInstance.closePaymentModal();
+            }
+        }
+    </script>
+</body>
+</html>
