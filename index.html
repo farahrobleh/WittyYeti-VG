@@ -56,10 +56,9 @@
                 <h2 class="game-subtitle">The Video Game</h2>
                 <p class="tagline">Proudly running from stuff nobody asked for</p>
                 
-                <div class="user-status">
+                <div class="title-user-status">
                     <div id="userInfo" class="user-info" style="display: none;">
                         <span>Welcome, <span id="userDisplayName"></span>!</span>
-                        <button id="logoutBtn" class="btn secondary-btn">LOGOUT</button>
                     </div>
                     <div id="loginPrompt" class="login-prompt">
                         <span>Not logged in</span>
@@ -67,10 +66,14 @@
                 </div>
                 
                 <div class="main-menu-buttons">
-                    <button id="startBtn" class="play-button">START RUNNING</button>
-                    <button id="howToPlayBtn" class="secondary-button">HOW TO PLAY</button>
-                    <button id="showLoginBtn" class="secondary-button login-button">LOGIN</button>
-                    <button id="muteBtn" class="mute-button">🔊 MUTE</button>
+                    <div class="button-row">
+                        <button id="startBtn" class="play-button">START RUNNING</button>
+                        <button id="howToPlayBtn" class="secondary-button">HOW TO PLAY</button>
+                    </div>
+                    <div class="button-row">
+                        <button id="showLoginBtn" class="secondary-button login-button">LOGIN</button>
+                        <button id="muteBtn" class="mute-button">🔊 MUTE</button>
+                    </div>
                 </div>
                 
                 <div class="instructions">
@@ -129,14 +132,6 @@
                         <div id="healthBar" class="health-bar"></div>
                     </div>
                 </div>
-                <div class="game-user-status">
-                    <div id="gameUserInfo" class="user-info" style="display: none;">
-                        <span>Welcome, <span id="gameUserDisplayName"></span>!</span>
-                    </div>
-                    <div id="gameLoginPrompt" class="login-prompt">
-                        <span>Not logged in</span>
-                    </div>
-                </div>
             </div>
             
                         <canvas id="gameCanvas" width="800" height="600"></canvas>
@@ -148,6 +143,15 @@
                 <button id="gameLoginBtn" class="control-button">LOGIN</button>
                 <button id="gameLogoutBtn" class="control-button" style="display: none;">LOGOUT</button>
                 <button id="gameMuteBtn" class="mute-button">🔊 MUTE</button>
+            </div>
+            
+            <div class="game-user-status">
+                <div id="gameUserInfo" class="user-info" style="display: none;">
+                    <span>Welcome, <span id="gameUserDisplayName"></span>!</span>
+                </div>
+                <div id="gameLoginPrompt" class="login-prompt">
+                    <span>Not logged in</span>
+                </div>
             </div>
         </div>
 
