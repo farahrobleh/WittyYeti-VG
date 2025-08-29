@@ -25,6 +25,10 @@ app.use(express.static('.')); // Serve static files from current directory
 const PAYPAL_CLIENT_ID = process.env.PAYPAL_CLIENT_ID || 'Ad28CVMHrm_ArFIxt7GBEqjyM-6z9qmyJgIEF8Jaesg7CDJ1ciylbIh2PyT8hi9GJbv2Fe7A4hUjUxwh';
 const PAYPAL_CLIENT_SECRET = process.env.PAYPAL_CLIENT_SECRET || 'ECbsfnxh0ev7Z0jB_K7lSR7zWWuAyj1DxQRWsZ5vwPm3NwRTW_WErirjivjJcBaKLUGfNvCSTdf4KpGK';
 
+// Log PayPal configuration (remove in production)
+console.log('PayPal Client ID:', PAYPAL_CLIENT_ID ? 'SET' : 'NOT SET');
+console.log('PayPal Secret:', PAYPAL_CLIENT_SECRET ? 'SET' : 'NOT SET');
+
 // PayPal API endpoints (LIVE for production)
 const PAYPAL_BASE_URL = 'https://api-m.paypal.com';
 

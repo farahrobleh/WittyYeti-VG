@@ -862,6 +862,9 @@ class WittyYetiGame {
         const container = document.getElementById('paypal-button-container');
         container.innerHTML = ''; // Clear existing buttons
         
+        console.log('Creating PayPal button for:', skinType, 'at $', price);
+        console.log('PayPal SDK available:', !!window.paypal);
+        
         if (window.paypal) {
             paypal.Buttons({
                 createOrder: async (data, actions) => {
@@ -932,11 +935,20 @@ class WittyYetiGame {
             }).render(container);
         } else {
             // Fallback if PayPal SDK not loaded
+            console.error('PayPal SDK not loaded!');
             const fallbackBtn = document.createElement('button');
             fallbackBtn.textContent = `Pay $${price.toFixed(2)} with PayPal`;
             fallbackBtn.className = 'pay-btn';
             fallbackBtn.onclick = () => this.processPayment();
             container.appendChild(fallbackBtn);
+            
+            // Show error message
+            const errorMsg = document.createElement('p');
+            errorMsg.textContent = 'PayPal is currently unavailable. Please try again later.';
+            errorMsg.style.color = '#e74c3c';
+            errorMsg.style.textAlign = 'center';
+            errorMsg.style.marginTop = '10px';
+            container.appendChild(errorMsg);
         }
     }
 
