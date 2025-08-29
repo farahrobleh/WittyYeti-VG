@@ -30,6 +30,7 @@ class GameState {
         this.fieldClearTime = 0; // Track post-victory field clearing period
         this.currentSkin = 'default'; // Track current skin
         this.ownedSkins = ['default']; // Track owned skins
+        this.frameCount = 0; // Track frames for skin powers
 
     }
 }
@@ -1454,6 +1455,9 @@ class WittyYetiGame {
                         break;
                 }
                 
+                // Apply skin power bonuses
+                damage = this.applySkinPowerBonuses(damage, 'damage');
+                
                 this.audioManager.playSound(soundKey);
                 this.gameState.health -= damage;
                 
@@ -1479,7 +1483,9 @@ class WittyYetiGame {
                 gift.collected = true;
                 this.gameState.giftsCollected++;
                 // Score based on gift type: 1, 2, or 3 points
-                this.gameState.score += gift.giftType;
+                let scoreGain = gift.giftType;
+                scoreGain = this.applySkinPowerBonuses(scoreGain, 'score');
+                this.gameState.score += scoreGain;
                 this.gifts.splice(i, 1);
                 console.log(`Gift ${gift.giftType} collected! +${gift.giftType} points. Total: ${this.gameState.score}`);
                 
@@ -1502,6 +1508,71 @@ class WittyYetiGame {
                rect1.x + rect1.width > rect2.x &&
                rect1.y < rect2.y + rect2.height &&
                rect1.y + rect1.height > rect2.y;
+    }
+
+    applySkinPowerBonuses(value, type) {
+        const currentSkin = this.gameState.currentSkin;
+        let multiplier = 1.0;
+        
+        switch(currentSkin) {
+            case 'golden': // Radioactive Yeti
+                if (type === 'damage') {
+                    multiplier = 0.7; // 30% damage resistance (take 70% damage)
+                }
+                break;
+            case 'ninja': // Shadow Ninja Yeti
+                if (type === 'damage') {
+                    // 25% chance to avoid damage completely
+                    if (Math.random() < 0.25) {
+                        return 0; // No damage taken
+                    }
+                }
+                break;
+            case 'cosmic': // Cosmic Yeti
+                if (type === 'score') {
+                    multiplier = 1.2; // 20% score multiplier
+                }
+                break;
+            case 'royal': // Royal Yeti
+                if (type === 'health') {
+                    // Health regeneration happens in update loop
+                    multiplier = 1.1; // 10% bonus
+                }
+                break;
+            case 'legendary': // Legendary Yeti
+                if (type === 'damage') {
+                    multiplier = 0.5; // 50% damage resistance
+                } else if (type === 'score') {
+                    multiplier = 1.5; // 50% score multiplier
+                } else if (type === 'health') {
+                    multiplier = 1.5; // 50% health bonus
+                }
+                break;
+        }
+        
+        return Math.round(value * multiplier);
+    }
+
+    updateSkinPowers() {
+        const currentSkin = this.gameState.currentSkin;
+        
+        // Health regeneration for Royal Yeti
+        if (currentSkin === 'royal' && this.gameState.health < this.gameState.maxHealth) {
+            // Regenerate 1 health every 5 seconds (assuming 60fps, that's 300 frames)
+            if (this.gameState.frameCount % 300 === 0) {
+                this.gameState.health = Math.min(this.gameState.health + 1, this.gameState.maxHealth);
+                console.log('Royal Yeti health regeneration: +1 HP');
+            }
+        }
+        
+        // Legendary Yeti health bonus
+        if (currentSkin === 'legendary' && this.gameState.health < this.gameState.maxHealth) {
+            // Regenerate 1 health every 3 seconds (180 frames)
+            if (this.gameState.frameCount % 180 === 0) {
+                this.gameState.health = Math.min(this.gameState.health + 1, this.gameState.maxHealth);
+                console.log('Legendary Yeti health regeneration: +1 HP');
+            }
+        }
     }
 
     update() {
@@ -1587,6 +1658,9 @@ class WittyYetiGame {
         // Update distance - VERY SLOW PROGRESSION
         this.gameState.distance += this.gameState.gameSpeed / 5000; // Much slower progression
         
+        // Increment frame counter for skin powers
+        this.gameState.frameCount++;
+        
         // Increase game speed over time - VERY SLOW
         if (this.gameState.gameSpeed < this.gameState.maxSpeed) {
             this.gameState.gameSpeed += 0.001; // Much slower speed increase
@@ -1597,6 +1671,9 @@ class WittyYetiGame {
         
         // Check for boss battle (after score updates from gift collection)
         this.checkForBossBattle();
+        
+        // Apply skin power effects (health regeneration, etc.)
+        this.updateSkinPowers();
         
         // Update UI
         this.updateUI();
