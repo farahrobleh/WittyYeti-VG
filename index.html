@@ -56,6 +56,30 @@
                 <h2 class="game-subtitle">The Video Game</h2>
                 <p class="tagline">Proudly running from stuff nobody asked for</p>
                 
+                <div class="auth-section">
+                    <div id="loginForm" class="auth-form">
+                        <h3>Login to Save Progress</h3>
+                        <input type="text" id="loginUsername" placeholder="Username or Email" required>
+                        <input type="password" id="loginPassword" placeholder="Password" required>
+                        <button id="loginBtn" class="btn primary-btn">LOGIN</button>
+                        <p>Don't have an account? <a href="#" id="showRegister">Register</a></p>
+                    </div>
+                    
+                    <div id="registerForm" class="auth-form" style="display: none;">
+                        <h3>Create Account</h3>
+                        <input type="text" id="registerUsername" placeholder="Username" required>
+                        <input type="email" id="registerEmail" placeholder="Email" required>
+                        <input type="password" id="registerPassword" placeholder="Password" required>
+                        <button id="registerBtn" class="btn primary-btn">REGISTER</button>
+                        <p>Already have an account? <a href="#" id="showLogin">Login</a></p>
+                    </div>
+                    
+                    <div id="userInfo" class="user-info" style="display: none;">
+                        <h3>Welcome, <span id="userDisplayName"></span>!</h3>
+                        <button id="logoutBtn" class="btn secondary-btn">LOGOUT</button>
+                    </div>
+                </div>
+                
                 <button id="startBtn" class="play-button">START RUNNING</button>
                 <button id="howToPlayBtn" class="secondary-button">HOW TO PLAY</button>
                 <button id="muteBtn" class="mute-button">🔊 MUTE</button>

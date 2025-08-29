@@ -510,6 +510,11 @@ class WittyYetiGame {
         this.obstacles = [];
         this.gifts = [];
         this.enemies = [];
+        this.pendingPurchase = null;
+        
+        // Authentication state
+        this.currentUser = null;
+        this.sessionToken = localStorage.getItem('sessionToken');
         
         // Professional spawning system
         this.spawnManager = {
@@ -537,6 +542,11 @@ class WittyYetiGame {
         } else {
             // User previously disabled audio - start silently
             this.startWithoutAudio();
+        }
+        
+        // Check for existing session
+        if (this.sessionToken) {
+            this.verifySession();
         }
         
         // Make game instance globally accessible
@@ -576,6 +586,147 @@ class WittyYetiGame {
         this.showTitleScreen();
     }
 
+    // Authentication methods
+    async registerUser(username, email, password) {
+        try {
+            const response = await fetch('/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ username, email, password })
+            });
+            
+            const result = await response.json();
+            
+            if (result.success) {
+                alert('Registration successful! Please login.');
+                this.showLoginForm();
+            } else {
+                alert('Registration failed: ' + result.error);
+            }
+        } catch (error) {
+            alert('Registration failed: ' + error.message);
+        }
+    }
+
+    async loginUser(username, password) {
+        try {
+            const response = await fetch('/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ username, password })
+            });
+            
+            const result = await response.json();
+            
+            if (result.success) {
+                this.currentUser = result.user;
+                this.sessionToken = result.sessionToken;
+                localStorage.setItem('sessionToken', this.sessionToken);
+                
+                // Load user's owned skins
+                await this.loadUserSkins();
+                
+                this.showUserInfo();
+                alert('Login successful! Your progress will be saved.');
+            } else {
+                alert('Login failed: ' + result.error);
+            }
+        } catch (error) {
+            alert('Login failed: ' + error.message);
+        }
+    }
+
+    async logout() {
+        try {
+            if (this.sessionToken) {
+                await fetch('/logout', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${this.sessionToken}`
+                    }
+                });
+            }
+        } catch (error) {
+            console.error('Logout error:', error);
+        }
+        
+        this.currentUser = null;
+        this.sessionToken = null;
+        localStorage.removeItem('sessionToken');
+        this.gameState.ownedSkins = ['default'];
+        this.showLoginForm();
+    }
+
+    async loadUserSkins() {
+        try {
+            const response = await fetch('/user-skins', {
+                headers: {
+                    'Authorization': `Bearer ${this.sessionToken}`
+                }
+            });
+            
+            const result = await response.json();
+            
+            if (result.skins) {
+                this.gameState.ownedSkins = ['default', ...result.skins];
+                this.updateSkinsUI();
+            }
+        } catch (error) {
+            console.error('Failed to load user skins:', error);
+        }
+    }
+
+    showLoginForm() {
+        document.getElementById('loginForm').style.display = 'block';
+        document.getElementById('registerForm').style.display = 'none';
+        document.getElementById('userInfo').style.display = 'none';
+    }
+
+    showRegisterForm() {
+        document.getElementById('loginForm').style.display = 'none';
+        document.getElementById('registerForm').style.display = 'block';
+        document.getElementById('userInfo').style.display = 'none';
+    }
+
+    showUserInfo() {
+        document.getElementById('loginForm').style.display = 'none';
+        document.getElementById('registerForm').style.display = 'none';
+        document.getElementById('userInfo').style.display = 'block';
+        document.getElementById('userDisplayName').textContent = this.currentUser.username;
+    }
+
+    async verifySession() {
+        try {
+            const response = await fetch('/user-skins', {
+                headers: {
+                    'Authorization': `Bearer ${this.sessionToken}`
+                }
+            });
+            
+            if (response.ok) {
+                const result = await response.json();
+                this.currentUser = { username: 'User' }; // We'll get full user info later
+                this.gameState.ownedSkins = ['default', ...result.skins];
+                this.showUserInfo();
+                this.updateSkinsUI();
+            } else {
+                // Session expired or invalid
+                this.sessionToken = null;
+                localStorage.removeItem('sessionToken');
+                this.showLoginForm();
+            }
+        } catch (error) {
+            console.error('Session verification failed:', error);
+            this.sessionToken = null;
+            localStorage.removeItem('sessionToken');
+            this.showLoginForm();
+        }
+    }
+
 
 
     loadAssets() {
@@ -596,6 +747,34 @@ class WittyYetiGame {
         document.getElementById('howToPlayBtn').addEventListener('click', () => {
             console.log('How to play button clicked');
             this.showHowToPlayScreen();
+        });
+        
+        // Authentication event listeners
+        document.getElementById('loginBtn').addEventListener('click', () => {
+            const username = document.getElementById('loginUsername').value;
+            const password = document.getElementById('loginPassword').value;
+            this.loginUser(username, password);
+        });
+        
+        document.getElementById('registerBtn').addEventListener('click', () => {
+            const username = document.getElementById('registerUsername').value;
+            const email = document.getElementById('registerEmail').value;
+            const password = document.getElementById('registerPassword').value;
+            this.registerUser(username, email, password);
+        });
+        
+        document.getElementById('logoutBtn').addEventListener('click', () => {
+            this.logout();
+        });
+        
+        document.getElementById('showRegister').addEventListener('click', (e) => {
+            e.preventDefault();
+            this.showRegisterForm();
+        });
+        
+        document.getElementById('showLogin').addEventListener('click', (e) => {
+            e.preventDefault();
+            this.showLoginForm();
         });
         
         document.getElementById('backToTitleBtn').addEventListener('click', () => {
@@ -898,6 +1077,7 @@ class WittyYetiGame {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',
+                                'Authorization': this.sessionToken ? `Bearer ${this.sessionToken}` : ''
                             },
                             body: JSON.stringify({
                                 orderID: data.orderID,

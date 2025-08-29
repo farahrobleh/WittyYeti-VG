@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const path = require('path');
 const axios = require('axios');
+const Database = require('./database');
 require('dotenv').config();
 
 const app = express();
@@ -61,12 +62,91 @@ const SKIN_PRICES = {
     'legendary': 4.99
 };
 
-// Store purchased skins (in production, use a database)
-const purchasedSkins = new Set();
+// Initialize database
+const database = new Database();
+
+// Clean up expired sessions every hour
+setInterval(() => {
+    database.cleanupExpiredSessions();
+}, 60 * 60 * 1000);
+
+// Authentication middleware
+const authenticateUser = async (req, res, next) => {
+    const sessionToken = req.headers.authorization?.replace('Bearer ', '');
+    
+    if (!sessionToken) {
+        return res.status(401).json({ error: 'No session token provided' });
+    }
+    
+    try {
+        const user = await database.verifySession(sessionToken);
+        req.user = user;
+        next();
+    } catch (error) {
+        res.status(401).json({ error: 'Invalid session token' });
+    }
+};
 
 // Routes
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
+});
+
+// User registration
+app.post('/register', async (req, res) => {
+    try {
+        const { username, email, password } = req.body;
+        
+        if (!username || !email || !password) {
+            return res.status(400).json({ error: 'All fields are required' });
+        }
+        
+        const user = await database.registerUser(username, email, password);
+        res.json({ success: true, message: 'User registered successfully' });
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+});
+
+// User login
+app.post('/login', async (req, res) => {
+    try {
+        const { username, password } = req.body;
+        
+        if (!username || !password) {
+            return res.status(400).json({ error: 'Username and password are required' });
+        }
+        
+        const result = await database.loginUser(username, password);
+        res.json({
+            success: true,
+            user: result.user,
+            sessionToken: result.sessionToken
+        });
+    } catch (error) {
+        res.status(401).json({ error: error.message });
+    }
+});
+
+// User logout
+app.post('/logout', authenticateUser, async (req, res) => {
+    try {
+        const sessionToken = req.headers.authorization.replace('Bearer ', '');
+        await database.logout(sessionToken);
+        res.json({ success: true, message: 'Logged out successfully' });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// Get user's owned skins
+app.get('/user-skins', authenticateUser, async (req, res) => {
+    try {
+        const skins = await database.getUserSkins(req.user.userId);
+        res.json({ skins });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
 });
 
 // Create PayPal order
@@ -147,14 +227,30 @@ app.post('/capture-order', async (req, res) => {
         
         // Verify payment was successful
         if (response.data.status === 'COMPLETED') {
-            // Grant the skin
-            purchasedSkins.add(skinType);
+            const transactionId = response.data.purchase_units[0].payments.captures[0].id;
+            
+            // Get user from session token (if provided)
+            const sessionToken = req.headers.authorization?.replace('Bearer ', '');
+            let userId = null;
+            
+            if (sessionToken) {
+                try {
+                    const user = await database.verifySession(sessionToken);
+                    userId = user.userId;
+                    
+                    // Store the purchase in database
+                    await database.addUserSkin(userId, skinType, transactionId);
+                } catch (error) {
+                    console.error('Failed to store purchase in database:', error);
+                }
+            }
             
             res.json({
                 success: true,
                 skinType: skinType,
                 message: 'Payment successful! Skin unlocked.',
-                transactionId: response.data.purchase_units[0].payments.captures[0].id
+                transactionId: transactionId,
+                userId: userId
             });
         } else {
             throw new Error('Payment not completed');
