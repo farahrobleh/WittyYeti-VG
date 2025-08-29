@@ -635,7 +635,11 @@ class WittyYetiGame {
                 
                 // Return to previous screen or title screen
                 if (this.currentScreen === 'login') {
-                    this.showTitleScreen();
+                    if (this.gameState.isPlaying) {
+                        this.returnToGame();
+                    } else {
+                        this.showTitleScreen();
+                    }
                 }
                 
                 alert('Login successful! Your progress will be saved.');
@@ -714,6 +718,15 @@ class WittyYetiGame {
         this.currentScreen = 'login';
         this.showScreen('login');
         this.showLoginForm();
+        
+        // If coming from game screen, pause the game and show return to game button
+        if (this.gameState.isPlaying) {
+            this.gameState.isPaused = true;
+            this.audioManager.pauseMusic();
+            document.getElementById('loginReturnToGameBtn').style.display = 'inline-block';
+        } else {
+            document.getElementById('loginReturnToGameBtn').style.display = 'none';
+        }
     }
     
     updateLoginButtons() {
@@ -753,6 +766,18 @@ class WittyYetiGame {
     
     hideLoginRequiredModal() {
         document.getElementById('loginRequiredModal').style.display = 'none';
+    }
+    
+    returnToGame() {
+        this.currentScreen = 'game';
+        this.showScreen('game');
+        
+        // Resume the game
+        this.gameState.isPaused = false;
+        this.audioManager.resumeMusic();
+        
+        // Hide the return to game button
+        document.getElementById('loginReturnToGameBtn').style.display = 'none';
     }
 
     async verifySession() {
@@ -836,6 +861,7 @@ class WittyYetiGame {
         // Login screen navigation
         document.getElementById('showLoginBtn').addEventListener('click', () => this.showLoginScreen());
         document.getElementById('loginBackToMenuBtn').addEventListener('click', () => this.showTitleScreen());
+        document.getElementById('loginReturnToGameBtn').addEventListener('click', () => this.returnToGame());
         
         // Login/logout buttons on all screens
         document.getElementById('gameLoginBtn').addEventListener('click', () => this.showLoginScreen());
