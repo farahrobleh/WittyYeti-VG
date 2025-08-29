@@ -113,7 +113,13 @@ const authenticateUser = async (req, res, next) => {
 
 // Routes
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'index.html'));
+    // Read the HTML file
+    let html = require('fs').readFileSync(path.join(__dirname, 'index.html'), 'utf8');
+    
+    // Replace the placeholder with the actual PayPal Client ID
+    html = html.replace('YOUR_PAYPAL_CLIENT_ID', PAYPAL_CLIENT_ID);
+    
+    res.send(html);
 });
 
 // Input validation helper
@@ -348,6 +354,11 @@ app.get('/cancel', (req, res) => {
 });
 
 app.listen(PORT, () => {
-    console.log(`🚀 Server running on http://localhost:${PORT}`);
-    console.log(`🎮 Game available at http://localhost:${PORT}`);
+    if (process.env.NODE_ENV === 'production') {
+        console.log(`🚀 Server running on port ${PORT}`);
+        console.log(`🎮 Game available at https://wittyyetigame.up.railway.app`);
+    } else {
+        console.log(`🚀 Server running on http://localhost:${PORT}`);
+        console.log(`🎮 Game available at http://localhost:${PORT}`);
+    }
 });
