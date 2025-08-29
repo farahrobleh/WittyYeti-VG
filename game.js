@@ -711,28 +711,48 @@ class WittyYetiGame {
     }
     
     showLoginScreen() {
-        this.switchToScreen('login');
+        this.currentScreen = 'login';
+        this.showScreen('login');
         this.showLoginForm();
     }
     
     updateLoginButtons() {
         const isLoggedIn = !!this.currentUser;
+        const username = this.currentUser?.username || 'User';
         
         // Update title screen
         document.getElementById('userInfo').style.display = isLoggedIn ? 'flex' : 'none';
         document.getElementById('loginPrompt').style.display = isLoggedIn ? 'none' : 'flex';
+        document.getElementById('userDisplayName').textContent = username;
         
         // Update game screen
+        document.getElementById('gameUserInfo').style.display = isLoggedIn ? 'flex' : 'none';
+        document.getElementById('gameLoginPrompt').style.display = isLoggedIn ? 'none' : 'flex';
+        document.getElementById('gameUserDisplayName').textContent = username;
         document.getElementById('gameLoginBtn').style.display = isLoggedIn ? 'none' : 'inline-block';
         document.getElementById('gameLogoutBtn').style.display = isLoggedIn ? 'inline-block' : 'none';
         
         // Update game over screen
+        document.getElementById('gameOverUserInfo').style.display = isLoggedIn ? 'flex' : 'none';
+        document.getElementById('gameOverLoginPrompt').style.display = isLoggedIn ? 'none' : 'flex';
+        document.getElementById('gameOverUserDisplayName').textContent = username;
         document.getElementById('gameOverLoginBtn').style.display = isLoggedIn ? 'none' : 'inline-block';
         document.getElementById('gameOverLogoutBtn').style.display = isLoggedIn ? 'inline-block' : 'none';
         
         // Update how to play screen
+        document.getElementById('howToPlayUserInfo').style.display = isLoggedIn ? 'flex' : 'none';
+        document.getElementById('howToPlayLoginPrompt').style.display = isLoggedIn ? 'none' : 'flex';
+        document.getElementById('howToPlayUserDisplayName').textContent = username;
         document.getElementById('howToPlayLoginBtn').style.display = isLoggedIn ? 'none' : 'inline-block';
         document.getElementById('howToPlayLogoutBtn').style.display = isLoggedIn ? 'inline-block' : 'none';
+    }
+    
+    showLoginRequiredModal() {
+        document.getElementById('loginRequiredModal').style.display = 'flex';
+    }
+    
+    hideLoginRequiredModal() {
+        document.getElementById('loginRequiredModal').style.display = 'none';
     }
 
     async verifySession() {
@@ -815,7 +835,7 @@ class WittyYetiGame {
         
         // Login screen navigation
         document.getElementById('showLoginBtn').addEventListener('click', () => this.showLoginScreen());
-        document.getElementById('backToMenuBtn').addEventListener('click', () => this.showTitleScreen());
+        document.getElementById('loginBackToMenuBtn').addEventListener('click', () => this.showTitleScreen());
         
         // Login/logout buttons on all screens
         document.getElementById('gameLoginBtn').addEventListener('click', () => this.showLoginScreen());
@@ -824,6 +844,15 @@ class WittyYetiGame {
         document.getElementById('gameOverLogoutBtn').addEventListener('click', () => this.logout());
         document.getElementById('howToPlayLoginBtn').addEventListener('click', () => this.showLoginScreen());
         document.getElementById('howToPlayLogoutBtn').addEventListener('click', () => this.logout());
+        
+        // Login required modal buttons
+        document.getElementById('goToLoginBtn').addEventListener('click', () => {
+            this.hideLoginRequiredModal();
+            this.showLoginScreen();
+        });
+        document.getElementById('cancelPurchaseBtn').addEventListener('click', () => {
+            this.hideLoginRequiredModal();
+        });
         
         document.getElementById('backToTitleBtn').addEventListener('click', () => {
             console.log('Back to title button clicked');
@@ -866,8 +895,8 @@ class WittyYetiGame {
             this.startGame();
         });
         
-        document.getElementById('backToMenuBtn').addEventListener('click', () => {
-            console.log('Back to menu button clicked');
+        document.getElementById('gameOverBackToMenuBtn').addEventListener('click', () => {
+            console.log('Game over back to menu button clicked');
             this.showTitleScreen();
         });
 
@@ -1015,7 +1044,13 @@ class WittyYetiGame {
                 const skinCard = e.target.closest('.skin-card');
                 const skinType = skinCard.dataset.skin;
                 const price = parseFloat(e.target.dataset.price);
-                this.openPaymentModal(skinType, price);
+                
+                // Check if user is logged in
+                if (!this.currentUser) {
+                    this.showLoginRequiredModal();
+                } else {
+                    this.openPaymentModal(skinType, price);
+                }
             });
         });
 

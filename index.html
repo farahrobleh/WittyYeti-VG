@@ -63,13 +63,15 @@
                     </div>
                     <div id="loginPrompt" class="login-prompt">
                         <span>Not logged in</span>
-                        <button id="showLoginBtn" class="btn primary-btn">LOGIN</button>
                     </div>
                 </div>
                 
-                <button id="startBtn" class="play-button">START RUNNING</button>
-                <button id="howToPlayBtn" class="secondary-button">HOW TO PLAY</button>
-                <button id="muteBtn" class="mute-button">🔊 MUTE</button>
+                <div class="main-menu-buttons">
+                    <button id="startBtn" class="play-button">START RUNNING</button>
+                    <button id="howToPlayBtn" class="secondary-button">HOW TO PLAY</button>
+                    <button id="showLoginBtn" class="secondary-button login-button">LOGIN</button>
+                    <button id="muteBtn" class="mute-button">🔊 MUTE</button>
+                </div>
                 
                 <div class="instructions">
                     <p><strong>How to Play:</strong></p>
@@ -107,7 +109,7 @@
                     </div>
                 </div>
                 
-                <button id="backToMenuBtn" class="secondary-button">BACK TO MENU</button>
+                <button id="loginBackToMenuBtn" class="secondary-button">BACK TO MENU</button>
             </div>
         </div>
 
@@ -127,6 +129,14 @@
                         <div id="healthBar" class="health-bar"></div>
                     </div>
                 </div>
+                <div class="game-user-status">
+                    <div id="gameUserInfo" class="user-info" style="display: none;">
+                        <span>Welcome, <span id="gameUserDisplayName"></span>!</span>
+                    </div>
+                    <div id="gameLoginPrompt" class="login-prompt">
+                        <span>Not logged in</span>
+                    </div>
+                </div>
             </div>
             
                         <canvas id="gameCanvas" width="800" height="600"></canvas>
@@ -144,6 +154,14 @@
         <!-- Game Over Screen -->
         <div id="gameOverScreen" class="screen">
             <div class="game-over-content">
+                <div class="game-over-user-status">
+                    <div id="gameOverUserInfo" class="user-info" style="display: none;">
+                        <span>Welcome, <span id="gameOverUserDisplayName"></span>!</span>
+                    </div>
+                    <div id="gameOverLoginPrompt" class="login-prompt">
+                        <span>Not logged in</span>
+                    </div>
+                </div>
                 <h2>Game Over!</h2>
                 <div class="final-stats">
                     <p>Final Score: <span id="finalScore">0</span></p>
@@ -156,7 +174,7 @@
                 </div>
                 
                 <button id="playAgainBtn" class="play-button">PLAY AGAIN</button>
-                <button id="backToMenuBtn" class="secondary-button">BACK TO MENU</button>
+                <button id="gameOverBackToMenuBtn" class="secondary-button">BACK TO MENU</button>
                 <button id="gameOverLoginBtn" class="secondary-button">LOGIN</button>
                 <button id="gameOverLogoutBtn" class="secondary-button" style="display: none;">LOGOUT</button>
                 <button id="gameOverMuteBtn" class="mute-button">🔊 MUTE</button>
@@ -166,6 +184,14 @@
         <!-- How to Play Screen -->
         <div id="howToPlayScreen" class="screen">
             <div class="how-to-play-content">
+                <div class="how-to-play-user-status">
+                    <div id="howToPlayUserInfo" class="user-info" style="display: none;">
+                        <span>Welcome, <span id="howToPlayUserDisplayName"></span>!</span>
+                    </div>
+                    <div id="howToPlayLoginPrompt" class="login-prompt">
+                        <span>Not logged in</span>
+                    </div>
+                </div>
                 <h2>Welcome to Witty Yeti: The Video Game!</h2>
                 
                 <div class="info-section">
@@ -478,6 +504,18 @@
             <div class="audio-permission-buttons">
                 <button id="enableAudioBtn" class="enable-audio-btn">YES, ENABLE AUDIO</button>
                 <button id="disableAudioBtn" class="disable-audio-btn">NO, KEEP SILENT</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Login Required Dialog -->
+    <div id="loginRequiredModal" class="audio-permission-modal">
+        <div class="audio-permission-content">
+            <h3>🔐 Login Required</h3>
+            <p>You need to be logged in to purchase premium skins. Your purchases will be saved to your account!</p>
+            <div class="audio-permission-buttons">
+                <button id="goToLoginBtn" class="enable-audio-btn">LOGIN NOW</button>
+                <button id="cancelPurchaseBtn" class="disable-audio-btn">CANCEL</button>
             </div>
         </div>
     </div>
