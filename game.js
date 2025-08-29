@@ -515,6 +515,7 @@ class WittyYetiGame {
         // Authentication state
         this.currentUser = null;
         this.sessionToken = localStorage.getItem('sessionToken');
+        this.currentScreen = 'title'; // Track current screen
         
         // Professional spawning system
         this.spawnManager = {
@@ -631,6 +632,12 @@ class WittyYetiGame {
                 await this.loadUserSkins();
                 
                 this.showUserInfo();
+                
+                // Return to previous screen or title screen
+                if (this.currentScreen === 'login') {
+                    this.showTitleScreen();
+                }
+                
                 alert('Login successful! Your progress will be saved.');
             } else {
                 alert('Login failed: ' + result.error);
@@ -658,6 +665,7 @@ class WittyYetiGame {
         this.sessionToken = null;
         localStorage.removeItem('sessionToken');
         this.gameState.ownedSkins = ['default'];
+        this.updateLoginButtons();
         this.showLoginForm();
     }
 
@@ -697,6 +705,34 @@ class WittyYetiGame {
         document.getElementById('registerForm').style.display = 'none';
         document.getElementById('userInfo').style.display = 'block';
         document.getElementById('userDisplayName').textContent = this.currentUser.username;
+        
+        // Update login/logout buttons on all screens
+        this.updateLoginButtons();
+    }
+    
+    showLoginScreen() {
+        this.switchToScreen('login');
+        this.showLoginForm();
+    }
+    
+    updateLoginButtons() {
+        const isLoggedIn = !!this.currentUser;
+        
+        // Update title screen
+        document.getElementById('userInfo').style.display = isLoggedIn ? 'flex' : 'none';
+        document.getElementById('loginPrompt').style.display = isLoggedIn ? 'none' : 'flex';
+        
+        // Update game screen
+        document.getElementById('gameLoginBtn').style.display = isLoggedIn ? 'none' : 'inline-block';
+        document.getElementById('gameLogoutBtn').style.display = isLoggedIn ? 'inline-block' : 'none';
+        
+        // Update game over screen
+        document.getElementById('gameOverLoginBtn').style.display = isLoggedIn ? 'none' : 'inline-block';
+        document.getElementById('gameOverLogoutBtn').style.display = isLoggedIn ? 'inline-block' : 'none';
+        
+        // Update how to play screen
+        document.getElementById('howToPlayLoginBtn').style.display = isLoggedIn ? 'none' : 'inline-block';
+        document.getElementById('howToPlayLogoutBtn').style.display = isLoggedIn ? 'inline-block' : 'none';
     }
 
     async verifySession() {
@@ -776,6 +812,18 @@ class WittyYetiGame {
             e.preventDefault();
             this.showLoginForm();
         });
+        
+        // Login screen navigation
+        document.getElementById('showLoginBtn').addEventListener('click', () => this.showLoginScreen());
+        document.getElementById('backToMenuBtn').addEventListener('click', () => this.showTitleScreen());
+        
+        // Login/logout buttons on all screens
+        document.getElementById('gameLoginBtn').addEventListener('click', () => this.showLoginScreen());
+        document.getElementById('gameLogoutBtn').addEventListener('click', () => this.logout());
+        document.getElementById('gameOverLoginBtn').addEventListener('click', () => this.showLoginScreen());
+        document.getElementById('gameOverLogoutBtn').addEventListener('click', () => this.logout());
+        document.getElementById('howToPlayLoginBtn').addEventListener('click', () => this.showLoginScreen());
+        document.getElementById('howToPlayLogoutBtn').addEventListener('click', () => this.logout());
         
         document.getElementById('backToTitleBtn').addEventListener('click', () => {
             console.log('Back to title button clicked');
@@ -881,6 +929,7 @@ class WittyYetiGame {
         this.updateUI();
         
         // Show game screen
+        this.currentScreen = 'game';
         this.showScreen('game');
         this.audioManager.playMusic('gameplay'); // Play gameplay music
         
@@ -931,12 +980,14 @@ class WittyYetiGame {
         const randomMessage = messages[Math.floor(Math.random() * messages.length)];
         document.getElementById('gameOverMessage').textContent = randomMessage;
         
+        this.currentScreen = 'gameOver';
         this.showScreen('gameOver');
     }
 
     showTitleScreen() {
         console.log('Showing title screen');
         this.gameState.reset();
+        this.currentScreen = 'title';
         this.showScreen('title');
         this.audioManager.stopMusic();
         this.audioManager.playMusic('menu'); // Play menu music
@@ -944,6 +995,7 @@ class WittyYetiGame {
 
     showHowToPlayScreen() {
         console.log('Showing how to play screen');
+        this.currentScreen = 'howToPlay';
         this.showScreen('howToPlay');
     }
 

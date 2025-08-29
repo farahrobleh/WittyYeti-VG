@@ -981,6 +981,63 @@ body {
     margin: 5px 0;
 }
 
+/* User status styles */
+.user-status {
+    margin: 20px 0;
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    text-align: center;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    color: #fff;
+}
+
+.user-info span {
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.login-prompt {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    color: #fff;
+}
+
+.login-prompt span {
+    font-size: 16px;
+    opacity: 0.8;
+}
+
+/* Login screen styles */
+.login-content {
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 40px 20px;
+    text-align: center;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.login-content h2 {
+    color: #fff;
+    margin-bottom: 30px;
+    font-size: 28px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
 /* Authentication Forms */
 .auth-section {
     margin: 20px 0;

@@ -56,27 +56,14 @@
                 <h2 class="game-subtitle">The Video Game</h2>
                 <p class="tagline">Proudly running from stuff nobody asked for</p>
                 
-                <div class="auth-section">
-                    <div id="loginForm" class="auth-form">
-                        <h3>Login to Save Progress</h3>
-                        <input type="text" id="loginUsername" placeholder="Username or Email" required>
-                        <input type="password" id="loginPassword" placeholder="Password" required>
-                        <button id="loginBtn" class="btn primary-btn">LOGIN</button>
-                        <p>Don't have an account? <a href="#" id="showRegister">Register</a></p>
-                    </div>
-                    
-                    <div id="registerForm" class="auth-form" style="display: none;">
-                        <h3>Create Account</h3>
-                        <input type="text" id="registerUsername" placeholder="Username" required>
-                        <input type="email" id="registerEmail" placeholder="Email" required>
-                        <input type="password" id="registerPassword" placeholder="Password" required>
-                        <button id="registerBtn" class="btn primary-btn">REGISTER</button>
-                        <p>Already have an account? <a href="#" id="showLogin">Login</a></p>
-                    </div>
-                    
+                <div class="user-status">
                     <div id="userInfo" class="user-info" style="display: none;">
-                        <h3>Welcome, <span id="userDisplayName"></span>!</h3>
+                        <span>Welcome, <span id="userDisplayName"></span>!</span>
                         <button id="logoutBtn" class="btn secondary-btn">LOGOUT</button>
+                    </div>
+                    <div id="loginPrompt" class="login-prompt">
+                        <span>Not logged in</span>
+                        <button id="showLoginBtn" class="btn primary-btn">LOGIN</button>
                     </div>
                 </div>
                 
@@ -95,6 +82,32 @@
                 <div class="footer">
                     <p>Created for Witty Yeti - The Gift-Giving Champions</p>
                 </div>
+            </div>
+        </div>
+
+        <!-- Login Screen -->
+        <div id="loginScreen" class="screen">
+            <div class="login-content">
+                <h2>Login to Save Progress</h2>
+                
+                <div class="auth-section">
+                    <div id="loginForm" class="auth-form">
+                        <input type="text" id="loginUsername" placeholder="Username or Email" required>
+                        <input type="password" id="loginPassword" placeholder="Password" required>
+                        <button id="loginBtn" class="btn primary-btn">LOGIN</button>
+                        <p>Don't have an account? <a href="#" id="showRegister">Register</a></p>
+                    </div>
+                    
+                    <div id="registerForm" class="auth-form" style="display: none;">
+                        <input type="text" id="registerUsername" placeholder="Username" required>
+                        <input type="email" id="registerEmail" placeholder="Email" required>
+                        <input type="password" id="registerPassword" placeholder="Password" required>
+                        <button id="registerBtn" class="btn primary-btn">REGISTER</button>
+                        <p>Already have an account? <a href="#" id="showLogin">Login</a></p>
+                    </div>
+                </div>
+                
+                <button id="backToMenuBtn" class="secondary-button">BACK TO MENU</button>
             </div>
         </div>
 
@@ -122,6 +135,8 @@
                 <button id="pauseBtn" class="control-button">PAUSE</button>
                 <button id="restartBtn" class="control-button">RESTART</button>
                 <button id="gameBackToMenuBtn" class="control-button">BACK TO MENU</button>
+                <button id="gameLoginBtn" class="control-button">LOGIN</button>
+                <button id="gameLogoutBtn" class="control-button" style="display: none;">LOGOUT</button>
                 <button id="gameMuteBtn" class="mute-button">🔊 MUTE</button>
             </div>
         </div>
@@ -142,6 +157,8 @@
                 
                 <button id="playAgainBtn" class="play-button">PLAY AGAIN</button>
                 <button id="backToMenuBtn" class="secondary-button">BACK TO MENU</button>
+                <button id="gameOverLoginBtn" class="secondary-button">LOGIN</button>
+                <button id="gameOverLogoutBtn" class="secondary-button" style="display: none;">LOGOUT</button>
                 <button id="gameOverMuteBtn" class="mute-button">🔊 MUTE</button>
             </div>
         </div>
@@ -329,6 +346,8 @@
                 </div>
 
                 <button id="backToTitleBtn" class="play-button">BACK TO MENU</button>
+                <button id="howToPlayLoginBtn" class="secondary-button">LOGIN</button>
+                <button id="howToPlayLogoutBtn" class="secondary-button" style="display: none;">LOGOUT</button>
             </div>
         </div>
     </div>
@@ -485,7 +504,7 @@
     </div>
 
     <!-- PayPal SDK (LIVE MODE) -->
-    <script src="https://www.paypal.com/sdk/js?client-id=YOUR_PAYPAL_CLIENT_ID&currency=USD"></script>
+    <script src="/paypal-sdk.js"></script>
     
     <script src="game.js"></script>
     <script>

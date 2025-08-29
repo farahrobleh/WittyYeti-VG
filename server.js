@@ -113,13 +113,20 @@ const authenticateUser = async (req, res, next) => {
 
 // Routes
 app.get('/', (req, res) => {
-    // Read the HTML file
-    let html = require('fs').readFileSync(path.join(__dirname, 'index.html'), 'utf8');
-    
-    // Replace the placeholder with the actual PayPal Client ID
-    html = html.replace('YOUR_PAYPAL_CLIENT_ID', PAYPAL_CLIENT_ID);
-    
-    res.send(html);
+    res.sendFile(path.join(__dirname, 'index.html'));
+});
+
+// Serve PayPal SDK with dynamic client ID
+app.get('/paypal-sdk.js', (req, res) => {
+    res.setHeader('Content-Type', 'application/javascript');
+    res.send(`
+        // Dynamic PayPal SDK loader
+        (function() {
+            var script = document.createElement('script');
+            script.src = 'https://www.paypal.com/sdk/js?client-id=${PAYPAL_CLIENT_ID}&currency=USD';
+            document.head.appendChild(script);
+        })();
+    `);
 });
 
 // Input validation helper
