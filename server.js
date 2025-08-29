@@ -17,18 +17,35 @@ app.use((req, res, next) => {
     next();
 });
 
-// Middleware
-app.use(cors());
-app.use(express.json());
+// Security middleware
+app.use(cors({
+    origin: process.env.NODE_ENV === 'production' ? ['https://wittyyetigame.up.railway.app'] : ['http://localhost:3000'],
+    credentials: true
+}));
+
+// Rate limiting for production
+if (process.env.NODE_ENV === 'production') {
+    const rateLimit = require('express-rate-limit');
+    const limiter = rateLimit({
+        windowMs: 15 * 60 * 1000, // 15 minutes
+        max: 100, // limit each IP to 100 requests per windowMs
+        message: 'Too many requests from this IP, please try again later.'
+    });
+    app.use('/api/', limiter);
+}
+
+app.use(express.json({ limit: '10mb' }));
 app.use(express.static('.')); // Serve static files from current directory
 
 // PayPal configuration (LIVE MODE) - Use environment variables for security
-const PAYPAL_CLIENT_ID = process.env.PAYPAL_CLIENT_ID || 'Ad28CVMHrm_ArFIxt7GBEqjyM-6z9qmyJgIEF8Jaesg7CDJ1ciylbIh2PyT8hi9GJbv2Fe7A4hUjUxwh';
-const PAYPAL_CLIENT_SECRET = process.env.PAYPAL_CLIENT_SECRET || 'ECbsfnxh0ev7Z0jB_K7lSR7zWWuAyj1DxQRWsZ5vwPm3NwRTW_WErirjivjJcBaKLUGfNvCSTdf4KpGK';
+const PAYPAL_CLIENT_ID = process.env.PAYPAL_CLIENT_ID;
+const PAYPAL_CLIENT_SECRET = process.env.PAYPAL_CLIENT_SECRET;
 
-// Log PayPal configuration (remove in production)
-console.log('PayPal Client ID:', PAYPAL_CLIENT_ID ? 'SET' : 'NOT SET');
-console.log('PayPal Secret:', PAYPAL_CLIENT_SECRET ? 'SET' : 'NOT SET');
+// Validate required environment variables
+if (!PAYPAL_CLIENT_ID || !PAYPAL_CLIENT_SECRET) {
+    console.error('❌ CRITICAL: PayPal credentials not set in environment variables!');
+    process.exit(1);
+}
 
 // PayPal API endpoints (LIVE for production)
 const PAYPAL_BASE_URL = 'https://api-m.paypal.com';
@@ -99,13 +116,40 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
 
+// Input validation helper
+function validateEmail(email) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+}
+
+function validateUsername(username) {
+    return username && username.length >= 3 && username.length <= 20 && /^[a-zA-Z0-9_]+$/.test(username);
+}
+
+function validatePassword(password) {
+    return password && password.length >= 6;
+}
+
 // User registration
 app.post('/register', async (req, res) => {
     try {
         const { username, email, password } = req.body;
         
+        // Input validation
         if (!username || !email || !password) {
             return res.status(400).json({ error: 'All fields are required' });
+        }
+        
+        if (!validateUsername(username)) {
+            return res.status(400).json({ error: 'Username must be 3-20 characters, alphanumeric and underscores only' });
+        }
+        
+        if (!validateEmail(email)) {
+            return res.status(400).json({ error: 'Invalid email format' });
+        }
+        
+        if (!validatePassword(password)) {
+            return res.status(400).json({ error: 'Password must be at least 6 characters' });
         }
         
         const user = await database.registerUser(username, email, password);
@@ -196,7 +240,8 @@ app.post('/create-order', async (req, res) => {
             }
         });
 
-        console.log('PayPal order created:', response.data.id);
+        // Log order creation (without exposing sensitive data)
+        console.log('PayPal order created successfully');
         
         res.json({
             orderID: response.data.id,
@@ -230,7 +275,7 @@ app.post('/capture-order', async (req, res) => {
             }
         });
 
-        console.log('PayPal payment captured:', response.data.id);
+        console.log('PayPal payment captured successfully');
         
         // Verify payment was successful
         if (response.data.status === 'COMPLETED') {
@@ -269,9 +314,9 @@ app.post('/capture-order', async (req, res) => {
     }
 });
 
-// Get purchased skins
+// Get purchased skins (deprecated - use /user-skins instead)
 app.get('/purchased-skins', (req, res) => {
-    res.json(Array.from(purchasedSkins));
+    res.status(410).json({ error: 'This endpoint is deprecated. Use /user-skins with authentication.' });
 });
 
 // Success page

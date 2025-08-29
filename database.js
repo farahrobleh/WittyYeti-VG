@@ -94,9 +94,14 @@ class Database {
             }
             
             // Create session token
+            const jwtSecret = process.env.JWT_SECRET;
+            if (!jwtSecret) {
+                throw new Error('JWT_SECRET environment variable not set');
+            }
+            
             const sessionToken = jwt.sign(
                 { userId: user.id, username: user.username },
-                process.env.JWT_SECRET || 'your-secret-key',
+                jwtSecret,
                 { expiresIn: '30d' }
             );
 
