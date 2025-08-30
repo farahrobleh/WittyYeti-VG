@@ -253,9 +253,6 @@ app.post('/create-order', async (req, res) => {
             }
         });
 
-        // Log order creation (without exposing sensitive data)
-        console.log('PayPal order created successfully');
-        
         res.json({
             orderID: response.data.id,
             skinType: skinType,
@@ -288,8 +285,6 @@ app.post('/capture-order', async (req, res) => {
             }
         });
 
-        console.log('PayPal payment captured successfully');
-        
         // Verify payment was successful
         if (response.data.status === 'COMPLETED') {
             const transactionId = response.data.purchase_units[0].payments.captures[0].id;

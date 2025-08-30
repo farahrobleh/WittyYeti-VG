@@ -4,7 +4,7 @@ A browser-based endless runner game featuring the beloved Witty Yeti mascot, cre
 
 ## 🚀 Live Demo
 
-[Play the game here!](YOUR_RAILWAY_URL_HERE)
+[Play the game here!](https://wittyyetigame.up.railway.app)
 
 ## 🎯 Features
 

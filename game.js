@@ -77,8 +77,7 @@ class AudioManager {
         
         // Add load event listener
         audio.addEventListener('canplaythrough', () => {
-            console.log(`Music loaded: ${key}`);
-            
+            // Music loaded successfully
         });
         
         audio.addEventListener('error', (e) => {
@@ -102,10 +101,6 @@ class AudioManager {
     }
 
     playMusic(key) {
-        console.log(`Attempting to play music: ${key}`);
-        console.log(`Music object exists:`, !!this.music[key]);
-        console.log(`Music enabled:`, this.musicEnabled);
-        
         if (!this.music[key]) {
             console.warn(`Music ${key} not found!`);
             return;
@@ -123,15 +118,9 @@ class AudioManager {
             
             // Only play if music is enabled
             if (this.musicEnabled) {
-                console.log(`Playing music: ${key}`);
-                this.currentMusic.play().then(() => {
-                    console.log(`Successfully started playing: ${key}`);
-                }).catch(e => {
+                this.currentMusic.play().catch(e => {
                     console.warn('Music play failed:', e);
-                    console.log('This might be due to browser autoplay policy');
                 });
-            } else {
-                console.log('Music is disabled');
             }
         } catch (e) {
             console.warn('Music play error:', e);
@@ -197,7 +186,6 @@ class AssetManager {
             this.loadedCount++;
             if (this.loadedCount === this.totalImages) {
                 this.allLoaded = true;
-                console.log('All images loaded successfully!');
             }
         };
         img.onerror = () => {
@@ -552,8 +540,6 @@ class WittyYetiGame {
         
         // Make game instance globally accessible
         window.gameInstance = this;
-        
-        console.log('Game initialized successfully');
     }
 
     showAudioPermissionDialog() {
@@ -821,12 +807,10 @@ class WittyYetiGame {
     setupEventListeners() {
         // Screen navigation
         document.getElementById('startBtn').addEventListener('click', () => {
-            console.log('Start button clicked');
             this.startGame();
         });
         
         document.getElementById('howToPlayBtn').addEventListener('click', () => {
-            console.log('How to play button clicked');
             this.showHowToPlayScreen();
         });
         
@@ -881,7 +865,6 @@ class WittyYetiGame {
         });
         
         document.getElementById('backToTitleBtn').addEventListener('click', () => {
-            console.log('Back to title button clicked');
             this.showTitleScreen();
         });
 
@@ -889,17 +872,14 @@ class WittyYetiGame {
         this.setupSkinsStoreListeners();
         
         document.getElementById('pauseBtn').addEventListener('click', () => {
-            console.log('Pause button clicked');
             this.togglePause();
         });
         
         document.getElementById('restartBtn').addEventListener('click', () => {
-            console.log('Restart button clicked');
             this.restartGame();
         });
         
         document.getElementById('gameBackToMenuBtn').addEventListener('click', () => {
-            console.log('Game back to menu button clicked');
             this.showTitleScreen();
         });
         
@@ -917,12 +897,10 @@ class WittyYetiGame {
         });
         
         document.getElementById('playAgainBtn').addEventListener('click', () => {
-            console.log('Play again button clicked');
             this.startGame();
         });
         
         document.getElementById('gameOverBackToMenuBtn').addEventListener('click', () => {
-            console.log('Game over back to menu button clicked');
             this.showTitleScreen();
         });
 
@@ -945,14 +923,8 @@ class WittyYetiGame {
                 case 'a':
                 case 'A':
                     e.preventDefault();
-                    console.log('🎮 LEFT/A KEY PRESSED!');
-                    console.log('🎮 Is boss battle active:', this.gameState.isBossBattle);
-                    console.log('🎮 Boss battle time:', this.gameState.bossBattleTime);
                     if (this.gameState.isBossBattle) {
-                        console.log('🎮 Calling handleBossBattleInput...');
                         this.handleBossBattleInput();
-                    } else {
-                        console.log('🎮 Boss battle not active, ignoring input');
                     }
                     break;
             }
@@ -960,8 +932,6 @@ class WittyYetiGame {
     }
 
     startGame() {
-        console.log('=== STARTING NEW GAME ===');
-        
         // Reset everything
         this.gameState.reset();
         this.gameState.isPlaying = true;
@@ -987,8 +957,6 @@ class WittyYetiGame {
         this.currentScreen = 'game';
         this.showScreen('game');
         this.audioManager.playMusic('gameplay'); // Play gameplay music
-        
-        console.log('Game started successfully');
     }
 
     togglePause() {
@@ -1009,8 +977,6 @@ class WittyYetiGame {
 
     gameOver() {
         if (this.gameState.gameOver) return;
-        
-        console.log('=== GAME OVER ===');
         
         this.gameState.gameOver = true;
         this.gameState.isPlaying = false;
@@ -1040,7 +1006,6 @@ class WittyYetiGame {
     }
 
     showTitleScreen() {
-        console.log('Showing title screen');
         this.gameState.reset();
         this.currentScreen = 'title';
         this.showScreen('title');
@@ -1049,7 +1014,6 @@ class WittyYetiGame {
     }
 
     showHowToPlayScreen() {
-        console.log('Showing how to play screen');
         this.currentScreen = 'howToPlay';
         this.showScreen('howToPlay');
     }
@@ -1104,8 +1068,6 @@ class WittyYetiGame {
             if (this.player) {
                 this.player.skinType = skinType;
             }
-            
-            console.log(`Skin selected: ${skinType}`);
         }
     }
 
@@ -1155,9 +1117,6 @@ class WittyYetiGame {
         const container = document.getElementById('paypal-button-container');
         container.innerHTML = ''; // Clear existing buttons
         
-        console.log('Creating PayPal button for:', skinType, 'at $', price);
-        console.log('PayPal SDK available:', !!window.paypal);
-        
         if (window.paypal) {
             paypal.Buttons({
                 createOrder: async (data, actions) => {
@@ -1176,7 +1135,6 @@ class WittyYetiGame {
                             throw new Error(orderData.error + (orderData.details ? ': ' + JSON.stringify(orderData.details) : ''));
                         }
                         
-                        console.log('Order created successfully:', orderData);
                         return orderData.orderID;
                     } catch (error) {
                         console.error('Error creating order:', error);
