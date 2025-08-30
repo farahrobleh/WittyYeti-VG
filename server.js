@@ -84,7 +84,7 @@ const database = new Database();
 
 // Initialize database tables
 database.init().then(() => {
-    console.log('Database tables initialized');
+    // Database tables initialized
 }).catch(error => {
     console.error('Failed to initialize database:', error);
 });
@@ -356,11 +356,5 @@ app.get('/cancel', (req, res) => {
 });
 
 app.listen(PORT, () => {
-    if (process.env.NODE_ENV === 'production') {
-        console.log(`🚀 Server running on port ${PORT}`);
-        console.log(`🎮 Game available at https://wittyyetigame.up.railway.app`);
-    } else {
-        console.log(`🚀 Server running on http://localhost:${PORT}`);
-        console.log(`🎮 Game available at http://localhost:${PORT}`);
-    }
+    // Server started successfully
 });

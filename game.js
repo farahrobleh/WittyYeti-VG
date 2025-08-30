@@ -1181,7 +1181,6 @@ class WittyYetiGame {
                 },
                 
                 onCancel: (data) => {
-                    console.log('PayPal payment cancelled by user');
                     // User cancelled - this is normal, no need for error message
                 }
             }).render(container);
@@ -1281,7 +1280,6 @@ class WittyYetiGame {
     }
 
     startDeathAnimation() {
-        console.log('=== STARTING DEATH ANIMATION ===');
         this.gameState.isDying = true;
         this.gameState.isPlaying = false;
         this.audioManager.stopMusic();
@@ -1320,21 +1318,13 @@ class WittyYetiGame {
         // Check if score has reached or exceeded a multiple of 50 and we haven't triggered this milestone yet
         const currentMilestone = Math.floor(this.gameState.score / 50) * 50;
         if (this.gameState.score > 0 && currentMilestone >= 50 && currentMilestone !== this.gameState.lastBossScore) {
-            console.log(`=== BOSS BATTLE TRIGGERED at score ${this.gameState.score} (milestone ${currentMilestone}) ===`);
             this.startBossBattle();
             this.gameState.lastBossScore = currentMilestone;
             return; // Exit immediately after triggering to prevent multiple calls
         }
-        
-        // Debug logging (only when not triggering)
-        if (this.gameState.score % 10 === 0) { // Log every 10 points to reduce spam
-            console.log(`Checking boss battle - Score: ${this.gameState.score}, Last boss score: ${this.gameState.lastBossScore}`);
-        }
     }
 
     startBossBattle() {
-        console.log('=== BOSS BATTLE STARTING ===');
-        console.log('Setting isBossBattle = true');
         this.gameState.isBossBattle = true;
         this.gameState.isPlaying = false;
         this.gameState.bossBattleTime = 0;
@@ -1349,26 +1339,16 @@ class WittyYetiGame {
             this.player.x = 150; // Move player to left side
             this.player.y = this.canvas.height - this.player.height - 20; // Ensure proper Y position
         }
-        
-        console.log('Boss battle state set:', this.gameState.isBossBattle);
     }
 
     handleBossBattleInput() {
-        console.log('🎮 TUG INPUT RECEIVED!');
-        console.log('🎮 Boss battle time:', this.gameState.bossBattleTime);
-        console.log('🎮 Is boss battle:', this.gameState.isBossBattle);
-        
         // Only allow input after the countdown (9 seconds total: 4s entrance + 5s countdown)
         if (this.gameState.bossBattleTime >= 9000) {
-            console.log('🎮 TUG EXECUTED! Moving meter from', this.gameState.bossMeter, 'to', Math.max(0, this.gameState.bossMeter - 0.08));
-            
             // Move meter towards player when input is received - NO COOLDOWN
             this.gameState.bossMeter = Math.max(0, this.gameState.bossMeter - 0.08);
             
             // Add visual feedback - flash effect
             this.gameState.tugFlashTime = 200; // Flash for 200ms
-        } else {
-            console.log('🎮 Tug blocked - still in countdown phase');
         }
     }
 
@@ -1387,32 +1367,26 @@ class WittyYetiGame {
             
             // Debug meter movement
             if (this.gameState.bossBattleTime % 1000 === 0) { // Log every second
-                console.log(`🎮 Boss meter: ${this.gameState.bossMeter.toFixed(4)}`);
             }
             
             // Check for win/lose conditions
             if (this.gameState.bossMeter >= 1) {
                 // Boss wins - steamroll effect
-                console.log(`🎮 BOSS WINS - Meter reached ${this.gameState.bossMeter.toFixed(4)}`);
                 this.bossWins();
             } else if (this.gameState.bossMeter <= 0.05) { // Player wins when meter is very close to 0
                 // Player wins - boss dies
-                console.log(`🎮 PLAYER WINS - Meter reached ${this.gameState.bossMeter.toFixed(4)}`);
                 this.bossLoses();
             }
         }
     }
 
     bossWins() {
-        console.log('=== BOSS WINS ===');
         this.gameState.isBossBattle = false;
         this.gameState.lastBossScore = 0; // Reset boss check
         this.startDeathAnimation();
     }
 
     bossLoses() {
-        console.log('=== BOSS LOSES ===');
-        console.log('Setting isBossBattle = false');
         this.gameState.isBossBattle = false;
         this.gameState.isPlaying = true;
         this.gameState.bossDeathTime = 0;
@@ -1433,16 +1407,9 @@ class WittyYetiGame {
         
         // Show victory message briefly
         this.showBossVictoryMessage();
-        
-        console.log('Boss battle ended, resuming normal gameplay');
-        console.log('Current score:', this.gameState.score);
-        console.log('Last boss score set to:', this.gameState.lastBossScore);
     }
 
     showBossVictoryMessage() {
-        // This will be called once when boss loses
-        console.log('BOSS JOHNNY DEFEATED!');
-        
         // Stop boss music and play victory music
         this.audioManager.stopMusic();
         this.audioManager.playMusic('victory');
@@ -1460,7 +1427,6 @@ class WittyYetiGame {
         if (this.gameState.victoryMessageTime >= 3000) { // 3 seconds for victory message
             this.gameState.showVictoryMessage = false;
             this.gameState.fieldClearTime = 0; // Start field clearing period
-            console.log('Victory message ended, starting field clearing period');
             return;
         }
     }
@@ -1543,8 +1509,6 @@ class WittyYetiGame {
     }
 
     showScreen(screenName) {
-        console.log(`Switching to screen: ${screenName}`);
-        
         // Set current screen
         this.currentScreen = screenName;
         
@@ -1557,7 +1521,6 @@ class WittyYetiGame {
         const targetScreen = document.getElementById(screenName + 'Screen');
         if (targetScreen) {
             targetScreen.classList.add('active');
-            console.log(`Successfully switched to ${screenName} screen`);
         } else {
             console.error(`Screen ${screenName}Screen not found`);
         }
@@ -1631,7 +1594,6 @@ class WittyYetiGame {
         const type = types[Math.floor(Math.random() * types.length)];
         
         this.obstacles.push(new Obstacle(this.canvas, this.assetManager, x, y, type));
-        console.log(`Spawned ${type} obstacle at lane ${lane}, distance: ${this.gameState.distance.toFixed(3)} km`);
     }
 
     spawnGift() {
@@ -1641,7 +1603,6 @@ class WittyYetiGame {
         const y = this.canvas.height - 100;
         
         this.gifts.push(new Gift(this.canvas, this.assetManager, x, y));
-        console.log(`Spawned gift at lane ${lane}, distance: ${this.gameState.distance.toFixed(3)} km`);
     }
 
     spawnEnemy() {
@@ -1653,7 +1614,6 @@ class WittyYetiGame {
         const type = types[Math.floor(Math.random() * types.length)];
         
         this.enemies.push(new Enemy(this.canvas, this.assetManager, x, y, type));
-        console.log(`Spawned ${type} enemy at lane ${lane}, distance: ${this.gameState.distance.toFixed(3)} km`);
     }
 
     checkCollisions() {
@@ -1664,7 +1624,6 @@ class WittyYetiGame {
         // Check obstacle collisions
         for (let obstacle of this.obstacles) {
             if (this.isColliding(playerBounds, obstacle.getBounds())) {
-                console.log('COLLISION: Player hit obstacle');
                 this.gameState.health--; // Decrease health
                 
                 // Remove the obstacle so it doesn't keep hitting
@@ -1685,8 +1644,6 @@ class WittyYetiGame {
         // Check enemy collisions
         for (let enemy of this.enemies) {
             if (this.isColliding(playerBounds, enemy.getBounds())) {
-                console.log('COLLISION: Player hit enemy');
-                
                 // Different damage based on enemy type
                 let damage = 1;
                 let soundKey = 'obstacleHit';
@@ -1738,15 +1695,9 @@ class WittyYetiGame {
                 scoreGain = this.applySkinPowerBonuses(scoreGain, 'score');
                 this.gameState.score += scoreGain;
                 this.gifts.splice(i, 1);
-                console.log(`Gift ${gift.giftType} collected! +${gift.giftType} points. Total: ${this.gameState.score}`);
                 
-                // Debug: Check if we just hit a boss battle trigger
+                // Check if we just hit a boss battle trigger
                 const currentMilestone = Math.floor(this.gameState.score / 50) * 50;
-                if (this.gameState.score >= 50 && currentMilestone >= 50) {
-                    console.log(`🎯 SCORE ${this.gameState.score} - MILESTONE ${currentMilestone} REACHED!`);
-                    console.log(`🎯 Current lastBossScore: ${this.gameState.lastBossScore}`);
-                    console.log(`🎯 Condition check: milestone !== lastBossScore = ${currentMilestone !== this.gameState.lastBossScore}`);
-                }
                 this.audioManager.playSound(`gift${gift.giftType}`); // Play gift collection sound
             }
         }
@@ -1812,7 +1763,6 @@ class WittyYetiGame {
             // Regenerate 1 health every 5 seconds (assuming 60fps, that's 300 frames)
             if (this.gameState.frameCount % 300 === 0) {
                 this.gameState.health = Math.min(this.gameState.health + 1, this.gameState.maxHealth);
-                console.log('Royal Yeti health regeneration: +1 HP');
             }
         }
         
@@ -1821,7 +1771,6 @@ class WittyYetiGame {
             // Regenerate 1 health every 3 seconds (180 frames)
             if (this.gameState.frameCount % 180 === 0) {
                 this.gameState.health = Math.min(this.gameState.health + 1, this.gameState.maxHealth);
-                console.log('Legendary Yeti health regeneration: +1 HP');
             }
         }
     }
@@ -2242,6 +2191,5 @@ class WittyYetiGame {
 
 // Initialize game when page loads
 document.addEventListener('DOMContentLoaded', () => {
-    console.log('=== WITTY YETI GAME INITIALIZING ===');
     new WittyYetiGame();
 });
