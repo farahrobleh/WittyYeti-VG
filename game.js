@@ -1108,16 +1108,32 @@ class WittyYetiGame {
         if (this.gameState.ownedSkins.includes(skinType)) {
             this.gameState.currentSkin = skinType;
             
-            // Update UI
-            document.querySelectorAll('.skin-select-btn').forEach(btn => {
-                btn.textContent = 'SELECT';
-                btn.classList.remove('selected');
+            // Update UI for all skin cards
+            const skinCards = document.querySelectorAll('.skin-card');
+            skinCards.forEach(card => {
+                const cardSkinType = card.dataset.skin;
+                const selectBtn = card.querySelector('.skin-select-btn');
+                const buyBtn = card.querySelector('.skin-buy-btn');
+                
+                if (this.gameState.ownedSkins.includes(cardSkinType)) {
+                    // User owns this skin - show select button
+                    if (selectBtn) selectBtn.style.display = 'inline-block';
+                    if (buyBtn) buyBtn.style.display = 'none';
+                    
+                    // Update selected state
+                    if (cardSkinType === skinType) {
+                        if (selectBtn) selectBtn.textContent = 'SELECTED';
+                        if (selectBtn) selectBtn.classList.add('selected');
+                    } else {
+                        if (selectBtn) selectBtn.textContent = 'SELECT';
+                        if (selectBtn) selectBtn.classList.remove('selected');
+                    }
+                } else {
+                    // User doesn't own this skin - show buy button
+                    if (selectBtn) selectBtn.style.display = 'none';
+                    if (buyBtn) buyBtn.style.display = 'inline-block';
+                }
             });
-            
-            const selectedCard = document.querySelector(`[data-skin="${skinType}"]`);
-            const selectedBtn = selectedCard.querySelector('.skin-select-btn');
-            selectedBtn.textContent = 'SELECTED';
-            selectedBtn.classList.add('selected');
             
             // Update player appearance if in game
             if (this.player) {
