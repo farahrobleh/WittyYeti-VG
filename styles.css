@@ -1177,6 +1177,15 @@ body {
 /* Login screen specific user status positioning */
 .login-screen .user-status {
     position: absolute;
+    top: 20px;
+    right: 20px;
+    bottom: auto;
+    transform: none;
+}
+
+/* How to Play screen specific user status positioning */
+.how-to-play-screen .user-status {
+    position: absolute;
     bottom: 20px;
     right: 20px;
     top: auto;
