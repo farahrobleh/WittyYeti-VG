@@ -1185,11 +1185,12 @@ body {
 
 /* How to Play screen specific user status positioning */
 .how-to-play-screen .user-status {
-    position: absolute;
+    position: fixed;
     bottom: 20px;
     right: 20px;
     top: auto;
     transform: none;
+    z-index: 1000;
 }
 
 /* Authentication Forms */

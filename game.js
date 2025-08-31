@@ -1159,7 +1159,17 @@ class WittyYetiGame {
         // Set skin image with filter
         const skinImage = document.getElementById('modalSkinImage');
         skinImage.src = 'assets/images/character/yeti-runner.png';
-        skinImage.className = `modal-skin-img ${skinType}-filter`;
+        
+        // Map skin types to their correct filter classes
+        const skinFilters = {
+            'golden': 'emerald-filter', // Radioactive Yeti uses emerald filter
+            'ninja': 'ninja-filter',
+            'cosmic': 'cosmic-filter',
+            'royal': 'royal-filter',
+            'legendary': 'legendary-filter'
+        };
+        
+        skinImage.className = `modal-skin-img ${skinFilters[skinType] || ''}`;
         
         // Show modal
         document.getElementById('paymentModal').classList.add('active');
