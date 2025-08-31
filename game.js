@@ -780,6 +780,12 @@ class WittyYetiGame {
     
     hideLoginRequiredModal() {
         document.getElementById('loginRequiredModal').style.display = 'none';
+        
+        // Resume the game if it was paused for purchase
+        if (this.gameState.isPlaying && this.gameState.isPaused) {
+            this.gameState.isPaused = false;
+            this.audioManager.playMusic('gameplay');
+        }
     }
     
     returnToGame() {
@@ -882,6 +888,7 @@ class WittyYetiGame {
         document.getElementById('gameOverLogoutBtn').addEventListener('click', () => this.logout());
         document.getElementById('howToPlayLoginBtn').addEventListener('click', () => this.showLoginScreen());
         document.getElementById('howToPlayLogoutBtn').addEventListener('click', () => this.logout());
+        document.getElementById('howToPlayLogoutBtn2').addEventListener('click', () => this.logout());
         document.getElementById('loginLogoutBtn').addEventListener('click', () => this.logout());
         
         // Login required modal buttons
@@ -1063,6 +1070,12 @@ class WittyYetiGame {
                 const skinCard = e.target.closest('.skin-card');
                 const skinType = skinCard.dataset.skin;
                 const price = parseFloat(e.target.dataset.price);
+                
+                // Always pause the game when clicking Buy Now
+                if (this.gameState.isPlaying && !this.gameState.isPaused) {
+                    this.gameState.isPaused = true;
+                    this.audioManager.pauseMusic();
+                }
                 
                 // Check if user is logged in
                 if (!this.currentUser) {

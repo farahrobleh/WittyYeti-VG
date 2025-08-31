@@ -203,14 +203,6 @@
         <!-- How to Play Screen -->
         <div id="howToPlayScreen" class="screen how-to-play-screen">
             <div class="how-to-play-content">
-                <div class="how-to-play-user-status">
-                    <div id="howToPlayUserInfo" class="user-info" style="display: none;">
-                        <span>Welcome, <span id="howToPlayUserDisplayName"></span>!</span>
-                    </div>
-                    <div id="howToPlayLoginPrompt" class="login-prompt">
-                        <span>Not logged in</span>
-                    </div>
-                </div>
                 <h2>Welcome to Witty Yeti: The Video Game!</h2>
                 
                 <div class="info-section">
@@ -393,6 +385,17 @@
                 <button id="backToTitleBtn" class="play-button">BACK TO MENU</button>
                 <button id="howToPlayLoginBtn" class="secondary-button">LOGIN</button>
                 <button id="howToPlayLogoutBtn" class="logout-button" style="display: none;">LOGOUT</button>
+            </div>
+            
+            <!-- How to Play screen user status -->
+            <div class="user-status">
+                <div id="howToPlayUserInfo" class="user-info" style="display: none;">
+                    <span>Welcome, <span id="howToPlayUserDisplayName"></span>!</span>
+                    <button id="howToPlayLogoutBtn2" class="logout-button">LOGOUT</button>
+                </div>
+                <div id="howToPlayLoginPrompt" class="login-prompt">
+                    <span>Not logged in</span>
+                </div>
             </div>
         </div>
     </div>
