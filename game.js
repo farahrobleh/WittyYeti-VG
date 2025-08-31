@@ -671,7 +671,6 @@ class WittyYetiGame {
             
             if (result.skins) {
                 this.gameState.ownedSkins = ['default', ...result.skins];
-                this.updateSkinsUI();
             }
         } catch (error) {
             console.error('Failed to load user skins:', error);
@@ -761,6 +760,8 @@ class WittyYetiGame {
         document.getElementById('loginUserDisplayName').textContent = username;
     }
 
+
+
     showNotification(message, type = 'info') {
         // Remove any existing notifications
         const existingNotification = document.querySelector('.notification');
@@ -823,7 +824,6 @@ class WittyYetiGame {
                 this.currentUser = { username: 'User' }; // We'll get full user info later
                 this.gameState.ownedSkins = ['default', ...result.skins];
                 this.showUserInfo();
-                this.updateSkinsUI();
             } else {
                 // Session expired or invalid
                 this.sessionToken = null;
