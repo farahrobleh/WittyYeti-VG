@@ -587,13 +587,13 @@ class WittyYetiGame {
             const result = await response.json();
             
             if (result.success) {
-                alert('Registration successful! Please login.');
+                this.showNotification('Registration successful! Please login.', 'success');
                 this.showLoginForm();
             } else {
-                alert('Registration failed: ' + result.error);
+                this.showNotification('Registration failed: ' + result.error, 'error');
             }
         } catch (error) {
-            alert('Registration failed: ' + error.message);
+            this.showNotification('Registration failed: ' + error.message, 'error');
         }
     }
 
@@ -628,12 +628,12 @@ class WittyYetiGame {
                     }
                 }
                 
-                alert('Login successful! Your progress will be saved.');
+                this.showNotification('Login successful! Your progress will be saved.', 'success');
             } else {
-                alert('Login failed: ' + result.error);
+                this.showNotification('Login failed: ' + result.error, 'error');
             }
         } catch (error) {
-            alert('Login failed: ' + error.message);
+            this.showNotification('Login failed: ' + error.message, 'error');
         }
     }
 
@@ -744,6 +744,34 @@ class WittyYetiGame {
         document.getElementById('howToPlayUserDisplayName').textContent = username;
         document.getElementById('howToPlayLoginBtn').style.display = isLoggedIn ? 'none' : 'inline-block';
         document.getElementById('howToPlayLogoutBtn').style.display = isLoggedIn ? 'inline-block' : 'none';
+        
+        // Update login screen
+        document.getElementById('loginUserInfo').style.display = isLoggedIn ? 'flex' : 'none';
+        document.getElementById('loginLoginPrompt').style.display = isLoggedIn ? 'none' : 'flex';
+        document.getElementById('loginUserDisplayName').textContent = username;
+    }
+
+    showNotification(message, type = 'info') {
+        // Remove any existing notifications
+        const existingNotification = document.querySelector('.notification');
+        if (existingNotification) {
+            existingNotification.remove();
+        }
+        
+        // Create notification element
+        const notification = document.createElement('div');
+        notification.className = `notification ${type}`;
+        notification.textContent = message;
+        
+        // Add to page
+        document.body.appendChild(notification);
+        
+        // Auto-remove after 4 seconds
+        setTimeout(() => {
+            if (notification.parentElement) {
+                notification.remove();
+            }
+        }, 4000);
     }
     
     showLoginRequiredModal() {
@@ -854,6 +882,7 @@ class WittyYetiGame {
         document.getElementById('gameOverLogoutBtn').addEventListener('click', () => this.logout());
         document.getElementById('howToPlayLoginBtn').addEventListener('click', () => this.showLoginScreen());
         document.getElementById('howToPlayLogoutBtn').addEventListener('click', () => this.logout());
+        document.getElementById('loginLogoutBtn').addEventListener('click', () => this.logout());
         
         // Login required modal buttons
         document.getElementById('goToLoginBtn').addEventListener('click', () => {

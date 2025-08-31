@@ -92,7 +92,7 @@
         </div>
 
         <!-- Login Screen -->
-        <div id="loginScreen" class="screen">
+        <div id="loginScreen" class="screen login-screen">
             <div class="login-content">
                 <h2>Login to Save Progress</h2>
                 
@@ -116,6 +116,17 @@
                 <div class="login-navigation-buttons">
                     <button id="loginBackToMenuBtn" class="secondary-button">BACK TO MENU</button>
                     <button id="loginReturnToGameBtn" class="secondary-button" style="display: none;">RETURN TO GAME</button>
+                </div>
+            </div>
+            
+            <!-- Login screen user status -->
+            <div class="user-status">
+                <div id="loginUserInfo" class="user-info" style="display: none;">
+                    <span>Welcome, <span id="loginUserDisplayName"></span>!</span>
+                    <button id="loginLogoutBtn" class="logout-button">LOGOUT</button>
+                </div>
+                <div id="loginLoginPrompt" class="login-prompt">
+                    <span>Not logged in</span>
                 </div>
             </div>
         </div>
@@ -145,7 +156,7 @@
                 <button id="restartBtn" class="control-button">RESTART</button>
                 <button id="gameBackToMenuBtn" class="control-button">BACK TO MENU</button>
                 <button id="gameLoginBtn" class="control-button">LOGIN</button>
-                <button id="gameLogoutBtn" class="control-button" style="display: none;">LOGOUT</button>
+                <button id="gameLogoutBtn" class="logout-button" style="display: none;">LOGOUT</button>
                 <button id="gameMuteBtn" class="mute-button">🔊 MUTE</button>
             </div>
             
@@ -184,7 +195,7 @@
                 <button id="playAgainBtn" class="play-button">PLAY AGAIN</button>
                 <button id="gameOverBackToMenuBtn" class="secondary-button">BACK TO MENU</button>
                 <button id="gameOverLoginBtn" class="secondary-button">LOGIN</button>
-                <button id="gameOverLogoutBtn" class="secondary-button" style="display: none;">LOGOUT</button>
+                <button id="gameOverLogoutBtn" class="logout-button" style="display: none;">LOGOUT</button>
                 <button id="gameOverMuteBtn" class="mute-button">🔊 MUTE</button>
             </div>
         </div>
@@ -381,7 +392,7 @@
 
                 <button id="backToTitleBtn" class="play-button">BACK TO MENU</button>
                 <button id="howToPlayLoginBtn" class="secondary-button">LOGIN</button>
-                <button id="howToPlayLogoutBtn" class="secondary-button" style="display: none;">LOGOUT</button>
+                <button id="howToPlayLogoutBtn" class="logout-button" style="display: none;">LOGOUT</button>
             </div>
         </div>
     </div>

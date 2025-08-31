@@ -1103,6 +1103,86 @@ body {
     margin-top: 20px;
 }
 
+/* Enhanced logout button styling */
+.logout-button {
+    background: linear-gradient(135deg, #e74c3c, #c0392b) !important;
+    color: white !important;
+    border: none !important;
+    padding: 10px 20px !important;
+    border-radius: 8px !important;
+    font-size: 14px !important;
+    font-weight: bold !important;
+    cursor: pointer !important;
+    transition: all 0.3s ease !important;
+    text-transform: uppercase !important;
+    letter-spacing: 1px !important;
+    box-shadow: 0 4px 15px rgba(231, 76, 60, 0.3) !important;
+}
+
+.logout-button:hover {
+    background: linear-gradient(135deg, #c0392b, #a93226) !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 6px 20px rgba(231, 76, 60, 0.4) !important;
+}
+
+/* Enhanced notification styling */
+.notification {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 25px 35px;
+    border-radius: 15px;
+    font-size: 16px;
+    font-weight: 600;
+    text-align: center;
+    z-index: 3000;
+    backdrop-filter: blur(15px);
+    border: 2px solid;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+    animation: notificationSlideIn 0.4s ease-out;
+    max-width: 400px;
+    min-width: 300px;
+}
+
+.notification.success {
+    background: linear-gradient(135deg, rgba(46, 204, 113, 0.95), rgba(39, 174, 96, 0.95));
+    color: white;
+    border-color: #27ae60;
+}
+
+.notification.error {
+    background: linear-gradient(135deg, rgba(231, 76, 60, 0.95), rgba(192, 57, 43, 0.95));
+    color: white;
+    border-color: #c0392b;
+}
+
+.notification.info {
+    background: linear-gradient(135deg, rgba(52, 152, 219, 0.95), rgba(41, 128, 185, 0.95));
+    color: white;
+    border-color: #2980b9;
+}
+
+@keyframes notificationSlideIn {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.8);
+    }
+    100% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+    }
+}
+
+/* Login screen specific user status positioning */
+.login-screen .user-status {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    top: auto;
+    transform: none;
+}
+
 /* Authentication Forms */
 .auth-section {
     margin: 20px 0;
