@@ -724,6 +724,16 @@ class WittyYetiGame {
         document.getElementById('loginPrompt').style.display = isLoggedIn ? 'none' : 'flex';
         document.getElementById('userDisplayName').textContent = username;
         
+        // Update main menu login/logout button
+        const mainMenuLoginBtn = document.getElementById('showLoginBtn');
+        if (isLoggedIn) {
+            mainMenuLoginBtn.textContent = 'LOGOUT';
+            mainMenuLoginBtn.className = 'secondary-button logout-button';
+        } else {
+            mainMenuLoginBtn.textContent = 'LOGIN';
+            mainMenuLoginBtn.className = 'secondary-button login-button';
+        }
+        
         // Update game screen
         document.getElementById('gameUserInfo').style.display = isLoggedIn ? 'flex' : 'none';
         document.getElementById('gameLoginPrompt').style.display = isLoggedIn ? 'none' : 'flex';
@@ -862,9 +872,7 @@ class WittyYetiGame {
             this.registerUser(username, email, password);
         });
         
-        document.getElementById('logoutBtn').addEventListener('click', () => {
-            this.logout();
-        });
+
         
         document.getElementById('showRegister').addEventListener('click', (e) => {
             e.preventDefault();
@@ -877,7 +885,13 @@ class WittyYetiGame {
         });
         
         // Login screen navigation
-        document.getElementById('showLoginBtn').addEventListener('click', () => this.showLoginScreen());
+        document.getElementById('showLoginBtn').addEventListener('click', () => {
+            if (this.currentUser) {
+                this.logout();
+            } else {
+                this.showLoginScreen();
+            }
+        });
         document.getElementById('loginBackToMenuBtn').addEventListener('click', () => this.showTitleScreen());
         document.getElementById('loginReturnToGameBtn').addEventListener('click', () => this.returnToGame());
         
@@ -888,7 +902,6 @@ class WittyYetiGame {
         document.getElementById('gameOverLogoutBtn').addEventListener('click', () => this.logout());
         document.getElementById('howToPlayLoginBtn').addEventListener('click', () => this.showLoginScreen());
         document.getElementById('howToPlayLogoutBtn').addEventListener('click', () => this.logout());
-        document.getElementById('howToPlayLogoutBtn2').addEventListener('click', () => this.logout());
         document.getElementById('loginLogoutBtn').addEventListener('click', () => this.logout());
         
         // Login required modal buttons
