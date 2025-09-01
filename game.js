@@ -1244,6 +1244,11 @@ class WittyYetiGame {
                             this.selectSkin(skinType);
                             this.showPurchaseSuccess(skinType);
                             this.closePaymentModal();
+                            
+                            // Force update skin store UI immediately
+                            setTimeout(() => {
+                                this.updateSkinStoreUI();
+                            }, 100);
                         } else {
                             throw new Error('Payment capture failed');
                         }
@@ -1313,6 +1318,11 @@ class WittyYetiGame {
                 
                 // Show success message
                 this.showPurchaseSuccess(this.pendingPurchase.skinType);
+                
+                // Force update skin store UI
+                setTimeout(() => {
+                    this.updateSkinStoreUI();
+                }, 100);
             }
             
             this.closePaymentModal();
@@ -1331,7 +1341,7 @@ class WittyYetiGame {
             <div class="success-content">
                 <h3>🎉 Purchase Successful!</h3>
                 <p>You now own the ${skinType} skin!</p>
-                <button onclick="this.parentElement.parentElement.remove()">OK</button>
+                <button class="success-ok-btn" onclick="this.parentElement.parentElement.remove()">OK</button>
             </div>
         `;
         
@@ -1350,7 +1360,39 @@ class WittyYetiGame {
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
         `;
         
+        // Style the OK button
+        const okBtn = notification.querySelector('.success-ok-btn');
+        okBtn.style.cssText = `
+            background: linear-gradient(135deg, #ffffff, #f0f0f0);
+            color: #4CAF50;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        `;
+        
+        // Add hover effect
+        okBtn.addEventListener('mouseenter', () => {
+            okBtn.style.background = 'linear-gradient(135deg, #f8f8f8, #e8e8e8)';
+            okBtn.style.transform = 'translateY(-2px)';
+            okBtn.style.boxShadow = '0 6px 12px rgba(0, 0, 0, 0.3)';
+        });
+        
+        okBtn.addEventListener('mouseleave', () => {
+            okBtn.style.background = 'linear-gradient(135deg, #ffffff, #f0f0f0)';
+            okBtn.style.transform = 'translateY(0)';
+            okBtn.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.2)';
+        });
+        
         document.body.appendChild(notification);
+        
+        // Force update skin store UI
+        this.updateSkinStoreUI();
         
         // Auto-remove after 5 seconds
         setTimeout(() => {
@@ -1358,6 +1400,36 @@ class WittyYetiGame {
                 notification.remove();
             }
         }, 5000);
+    }
+
+    updateSkinStoreUI() {
+        // Force update all skin cards to show correct buttons
+        const skinCards = document.querySelectorAll('.skin-card');
+        skinCards.forEach(card => {
+            const skinType = card.dataset.skin;
+            const selectBtn = card.querySelector('.skin-select-btn');
+            const buyBtn = card.querySelector('.skin-buy-btn');
+            
+            if (this.gameState.ownedSkins.includes(skinType)) {
+                // User owns this skin - show select button
+                if (selectBtn) {
+                    selectBtn.style.display = 'inline-block';
+                    selectBtn.textContent = 'SELECT';
+                    selectBtn.classList.remove('selected');
+                    
+                    // Mark as selected if it's the current skin
+                    if (this.gameState.currentSkin === skinType) {
+                        selectBtn.textContent = 'SELECTED';
+                        selectBtn.classList.add('selected');
+                    }
+                }
+                if (buyBtn) buyBtn.style.display = 'none';
+            } else {
+                // User doesn't own this skin - show buy button
+                if (selectBtn) selectBtn.style.display = 'none';
+                if (buyBtn) buyBtn.style.display = 'inline-block';
+            }
+        });
     }
 
     startDeathAnimation() {
