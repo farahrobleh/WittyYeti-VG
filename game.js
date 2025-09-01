@@ -675,6 +675,7 @@ class WittyYetiGame {
             
             if (result.skins) {
                 this.gameState.ownedSkins = ['default', ...result.skins];
+                console.log('Loaded user skins:', this.gameState.ownedSkins);
                 // Update skin store UI to show correct buttons
                 this.updateSkinStoreUI();
             }
@@ -1409,12 +1410,20 @@ class WittyYetiGame {
     }
 
     updateSkinStoreUI() {
+        console.log('Updating skin store UI...');
+        console.log('Owned skins:', this.gameState.ownedSkins);
+        console.log('Current skin:', this.gameState.currentSkin);
+        
         // Force update all skin cards to show correct buttons
         const skinCards = document.querySelectorAll('.skin-card');
+        console.log('Found skin cards:', skinCards.length);
+        
         skinCards.forEach(card => {
             const skinType = card.dataset.skin;
             const selectBtn = card.querySelector('.skin-select-btn');
             const buyBtn = card.querySelector('.skin-buy-btn');
+            
+            console.log(`Skin: ${skinType}, Owned: ${this.gameState.ownedSkins.includes(skinType)}, SelectBtn: ${!!selectBtn}, BuyBtn: ${!!buyBtn}`);
             
             if (this.gameState.ownedSkins.includes(skinType)) {
                 // User owns this skin - show select button
@@ -1428,6 +1437,7 @@ class WittyYetiGame {
                         selectBtn.textContent = 'SELECTED';
                         selectBtn.classList.add('selected');
                     }
+                    console.log(`Updated ${skinType} select button to: ${selectBtn.textContent}`);
                 }
                 if (buyBtn) buyBtn.style.display = 'none';
             } else {
