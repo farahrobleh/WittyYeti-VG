@@ -625,6 +625,10 @@ class WittyYetiGame {
                         this.returnToGame();
                     } else {
                         this.showTitleScreen();
+                        // Update skin store UI when returning to title screen
+                        setTimeout(() => {
+                            this.updateSkinStoreUI();
+                        }, 100);
                     }
                 }
                 
@@ -671,6 +675,8 @@ class WittyYetiGame {
             
             if (result.skins) {
                 this.gameState.ownedSkins = ['default', ...result.skins];
+                // Update skin store UI to show correct buttons
+                this.updateSkinStoreUI();
             }
         } catch (error) {
             console.error('Failed to load user skins:', error);
