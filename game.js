@@ -1205,95 +1205,97 @@ class WittyYetiGame {
         const container = document.getElementById('paypal-button-container');
         container.innerHTML = ''; // Clear existing buttons
         
-        if (window.paypal) {
-            paypal.Buttons({
-                createOrder: async (data, actions) => {
-                    try {
-                        const response = await fetch('/create-order', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                            },
-                            body: JSON.stringify({ skinType })
-                        });
-                        
-                        const orderData = await response.json();
-                        
-                        if (orderData.error) {
-                            throw new Error(orderData.error + (orderData.details ? ': ' + JSON.stringify(orderData.details) : ''));
-                        }
-                        
-                        return orderData.orderID;
-                    } catch (error) {
-                        console.error('Error creating order:', error);
-                        throw error;
-                    }
-                },
-                
-                onApprove: async (data, actions) => {
-                    try {
-                        const response = await fetch('/capture-order', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'Authorization': this.sessionToken ? `Bearer ${this.sessionToken}` : ''
-                            },
-                            body: JSON.stringify({
-                                orderID: data.orderID,
-                                skinType: skinType
-                            })
-                        });
-                        
-                        const result = await response.json();
-                        
-                        if (result.success) {
-                            this.gameState.ownedSkins.push(skinType);
-                            this.selectSkin(skinType);
-                            this.showPurchaseSuccess(skinType);
-                            this.closePaymentModal();
-                            
-                            // Force update skin store UI immediately
-                            setTimeout(() => {
-                                this.updateSkinStoreUI();
-                            }, 100);
-                        } else {
-                            throw new Error('Payment capture failed');
-                        }
-                    } catch (error) {
-                        console.error('Payment failed:', error);
-                        alert('Payment failed: ' + error.message);
-                    }
-                },
-                
-                onError: (err) => {
-                    console.error('PayPal error:', err);
-                    // Don't show error for popup close - that's normal user behavior
-                    if (err.message !== 'Detected popup close') {
-                        alert('Payment error: ' + err.message);
-                    }
-                },
-                
-                onCancel: (data) => {
-                    // User cancelled - this is normal, no need for error message
-                }
-            }).render(container);
-        } else {
-            // Fallback if PayPal SDK not loaded
-            console.error('PayPal SDK not loaded!');
-            const fallbackBtn = document.createElement('button');
-            fallbackBtn.textContent = `Pay $${price.toFixed(2)} with PayPal`;
-            fallbackBtn.className = 'pay-btn';
-            fallbackBtn.onclick = () => this.processPayment();
-            container.appendChild(fallbackBtn);
+        // Show promotion message instead of payment buttons
+        const promotionDiv = document.createElement('div');
+        promotionDiv.className = 'promotion-message';
+        promotionDiv.innerHTML = `
+            <div class="promotion-content">
+                <h3>🎉 LIMITED TIME OFFER!</h3>
+                <p>All Premium Skins Are <strong>100% FREE</strong></p>
+                <p class="promotion-subtitle">JLS Trading Co. is celebrating our launch!</p>
+                <p class="promotion-details">Enjoy these exclusive skins at no cost - our gift to the Witty Yeti community!</p>
+                <button class="promotion-claim-btn">CLAIM FREE SKIN</button>
+            </div>
+        `;
+        
+        // Style the promotion message
+        promotionDiv.style.cssText = `
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: linear-gradient(135deg, #FF6B6B, #4ECDC4);
+            color: white;
+            padding: 40px;
+            border-radius: 20px;
+            z-index: 2000;
+            text-align: center;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4);
+            max-width: 500px;
+        `;
+        
+        // Style the claim button
+        const claimBtn = promotionDiv.querySelector('.promotion-claim-btn');
+        claimBtn.style.cssText = `
+            background: linear-gradient(135deg, #FFD93D, #FF6B6B);
+            color: #333;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        `;
+        
+        // Add hover effect
+        claimBtn.addEventListener('mouseenter', () => {
+            claimBtn.style.transform = 'translateY(-3px) scale(1.05)';
+            claimBtn.style.boxShadow = '0 12px 24px rgba(0, 0, 0, 0.4)';
+        });
+        
+        claimBtn.addEventListener('mouseleave', () => {
+            claimBtn.style.transform = 'translateY(0) scale(1)';
+            claimBtn.style.boxShadow = '0 8px 16px rgba(0, 0, 0, 0.3)';
+        });
+        
+        // Add click handler to claim the skin
+        claimBtn.addEventListener('click', () => {
+            // Add skin to owned skins
+            if (!this.gameState.ownedSkins.includes(skinType)) {
+                this.gameState.ownedSkins.push(skinType);
+            }
             
-            // Show error message
-            const errorMsg = document.createElement('p');
-            errorMsg.textContent = 'PayPal is currently unavailable. Please try again later.';
-            errorMsg.style.color = '#e74c3c';
-            errorMsg.style.textAlign = 'center';
-            errorMsg.style.marginTop = '10px';
-            container.appendChild(errorMsg);
-        }
+            // Select the skin
+            this.selectSkin(skinType);
+            
+            // Show success message
+            this.showPurchaseSuccess(skinType);
+            
+            // Close payment modal
+            this.closePaymentModal();
+            
+            // Update skin store UI
+            setTimeout(() => {
+                this.updateSkinStoreUI();
+            }, 100);
+            
+            // Remove promotion message
+            promotionDiv.remove();
+        });
+        
+        document.body.appendChild(promotionDiv);
+        
+        // Auto-remove after 10 seconds if not claimed
+        setTimeout(() => {
+            if (promotionDiv.parentElement) {
+                promotionDiv.remove();
+            }
+        }, 10000);
     }
 
 
