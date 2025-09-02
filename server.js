@@ -72,7 +72,7 @@ async function getPayPalAccessToken() {
 
 // Skin prices
 const SKIN_PRICES = {
-    'golden': 2.99,
+            'radioactive': 2.99,
     'ninja': 4.99,
     'cosmic': 3.99,
     'royal': 1.99,

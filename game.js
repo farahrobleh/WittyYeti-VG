@@ -297,7 +297,7 @@ class Player {
             
             // Apply skin filter based on skin type
             switch(this.skinType) {
-                case 'golden':
+                case 'radioactive':
                     this.ctx.filter = 'sepia(1) hue-rotate(45deg) saturate(2) brightness(1.2)';
                     break;
                 case 'ninja':
@@ -1106,6 +1106,17 @@ class WittyYetiGame {
             });
         });
 
+        // Close sidebar button
+        const closeSidebarBtn = document.getElementById('closeSidebarBtn');
+        if (closeSidebarBtn) {
+            closeSidebarBtn.addEventListener('click', () => {
+                const sidebar = document.querySelector('.skins-store-sidebar');
+                if (sidebar) {
+                    sidebar.classList.remove('show');
+                }
+            });
+        }
+
 
 
 
@@ -1166,7 +1177,7 @@ class WittyYetiGame {
         
         // Update modal content with skin info
         const skinNames = {
-            'golden': 'Radioactive Yeti',
+            'radioactive': 'Radioactive Yeti',
             'ninja': 'Shadow Ninja Yeti', 
             'cosmic': 'Cosmic Yeti',
             'royal': 'Royal Yeti',
@@ -1174,7 +1185,7 @@ class WittyYetiGame {
         };
         
         const skinDescriptions = {
-            'golden': '☢️ Glowing with nuclear gift-giving power',
+            'radioactive': '☢️ Glowing with nuclear gift-giving power',
             'ninja': '🥷 Stealth gift delivery master',
             'cosmic': '🚀 Intergalactic gift-giving champion',
             'royal': '👑 Crowned gift-giving monarch',
@@ -1191,7 +1202,7 @@ class WittyYetiGame {
         
         // Map skin types to their correct filter classes
         const skinFilters = {
-            'golden': 'emerald-filter', // Radioactive Yeti uses emerald filter
+            'radioactive': 'emerald-filter', // Radioactive Yeti uses emerald filter
             'ninja': 'ninja-filter',
             'cosmic': 'cosmic-filter',
             'royal': 'royal-filter',
@@ -1260,8 +1271,8 @@ class WittyYetiGame {
             <div class="promotion-content">
                 <h3>🎉 LIMITED TIME OFFER!</h3>
                 <p>All Premium Skins Are <strong>100% FREE</strong></p>
-                <p class="promotion-subtitle">JLS Trading Co. is celebrating our launch!</p>
-                <p class="promotion-details">Enjoy these exclusive skins at no cost - our gift to the Witty Yeti community!</p>
+                <p class="promotion-subtitle">JLS Trading Co. has stopped selling skins for money!</p>
+                <p class="promotion-details">As of September 2nd, 2025, all premium skins are now completely free for all players. The good folks at JLS Trading Co. (and our CEO Johnny) will be playing this game too - we're not sponsors, we're players just like you!</p>
                 <button class="promotion-claim-btn">CLAIM FREE SKIN</button>
             </div>
         `;
@@ -1323,9 +1334,6 @@ class WittyYetiGame {
             
             // Select the skin
             this.selectSkin(skinType);
-            
-            // Show success message
-            this.showPurchaseSuccess(skinType);
             
             // Close payment modal
             this.closePaymentModal();
@@ -1939,7 +1947,7 @@ class WittyYetiGame {
         let multiplier = 1.0;
         
         switch(currentSkin) {
-            case 'golden': // Radioactive Yeti
+            case 'radioactive': // Radioactive Yeti
                 if (type === 'damage') {
                     multiplier = 0.7; // 30% damage resistance (take 70% damage)
                 }
@@ -2047,6 +2055,11 @@ class WittyYetiGame {
         
         // Update player
         if (this.player) {
+            // Ensure player skin is always synchronized with game state
+            if (this.player.skinType !== this.gameState.currentSkin) {
+                this.player.skinType = this.gameState.currentSkin;
+                console.log(`Syncing player skin: ${this.gameState.currentSkin}`);
+            }
             this.player.update();
         }
         
