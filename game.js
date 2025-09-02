@@ -773,12 +773,12 @@ class WittyYetiGame {
         // Add to page
         document.body.appendChild(notification);
         
-        // Auto-remove after 4 seconds
+        // Auto-remove after 2.5 seconds (much faster)
         setTimeout(() => {
             if (notification.parentElement) {
                 notification.remove();
             }
-        }, 4000);
+        }, 2500);
     }
     
     showLoginRequiredModal() {
@@ -1339,16 +1339,17 @@ class WittyYetiGame {
             // Select the skin
             this.selectSkin(skinType);
             
-            // Close payment modal
+            // Close payment modal immediately
             this.closePaymentModal();
             
-            // Update skin store UI
-            setTimeout(() => {
-                this.updateSkinStoreUI();
-            }, 100);
-            
-            // Remove promotion message
+            // Remove promotion message immediately
             promotionDiv.remove();
+            
+            // Update skin store UI immediately
+            this.updateSkinStoreUI();
+            
+            // Show brief success notification
+            this.showNotification(`🎉 ${skinType} skin claimed successfully!`, 'success');
         });
         
         document.body.appendChild(promotionDiv);
@@ -1466,12 +1467,12 @@ class WittyYetiGame {
         // Force update skin store UI
         this.updateSkinStoreUI();
         
-        // Auto-remove after 5 seconds
+        // Auto-remove after 3 seconds (much faster)
         setTimeout(() => {
             if (notification.parentElement) {
                 notification.remove();
             }
-        }, 5000);
+        }, 3000);
     }
 
     updateSkinStoreUI() {
