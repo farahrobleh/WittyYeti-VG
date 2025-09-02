@@ -1011,7 +1011,7 @@ class WittyYetiGame {
     }
 
     togglePause() {
-        if (this.gameState.gameOver) return;
+        if (this.gameState.gameOver || !this.gameState.isPlaying) return;
         
         this.gameState.isPaused = !this.gameState.isPaused;
         
@@ -2444,7 +2444,9 @@ class WittyYetiGame {
     }
 
     gameLoop() {
-        this.update();
+        if (!this.gameState.isPaused) {
+            this.update();
+        }
         this.draw();
         requestAnimationFrame(() => this.gameLoop());
     }
