@@ -1123,7 +1123,7 @@ class WittyYetiGame {
                 const buyBtn = card.querySelector('.skin-buy-btn');
                 
                 if (this.gameState.ownedSkins.includes(cardSkinType)) {
-                    // User owns this skin - show select button
+                    // User owns this skin - show select button (never hide it)
                     if (selectBtn) selectBtn.style.display = 'inline-block';
                     if (buyBtn) buyBtn.style.display = 'none';
                     
@@ -1145,7 +1145,13 @@ class WittyYetiGame {
             // Update player appearance if in game
             if (this.player) {
                 this.player.skinType = skinType;
+                console.log(`Player skin updated to: ${skinType}`);
             }
+            
+            // Ensure game state and player skin are synchronized
+            this.gameState.currentSkin = skinType;
+            
+            console.log(`Skin selected: ${skinType}, Current skin: ${this.gameState.currentSkin}`);
         }
     }
 
@@ -1307,9 +1313,12 @@ class WittyYetiGame {
         
         // Add click handler to claim the skin
         claimBtn.addEventListener('click', () => {
+            console.log(`Claiming skin: ${skinType}`);
+            
             // Add skin to owned skins
             if (!this.gameState.ownedSkins.includes(skinType)) {
                 this.gameState.ownedSkins.push(skinType);
+                console.log(`Added ${skinType} to owned skins:`, this.gameState.ownedSkins);
             }
             
             // Select the skin
