@@ -1257,8 +1257,8 @@ class WittyYetiGame {
             <div class="promotion-content">
                 <h3>🎉 LIMITED TIME OFFER!</h3>
                 <p>All Premium Skins Are <strong>100% FREE</strong></p>
-                <p class="promotion-subtitle">JLS Trading Co. has stopped selling skins for money!</p>
-                <p class="promotion-details">As of September 2nd, 2025, all premium skins are now completely free for all players. The good folks at JLS Trading Co. (and our CEO Johnny) will be playing this game too - we're not sponsors, we're players just like you!</p>
+                <p class="promotion-subtitle">Robleh has stopped selling skins for money as of Sept. 3 2025 (video's complete, he got what he wanted out of this haha)!</p>
+                <p class="promotion-details">Going foward, as a treat to all the good folks at JLS Trading Co. (hi Johnny!), and all the gamers of the world, all premium skins are now completely free for all players. Happy playing!</p>
                 <button class="promotion-claim-btn">CLAIM FREE SKIN</button>
             </div>
         `;
@@ -1840,7 +1840,11 @@ class WittyYetiGame {
         // Check obstacle collisions
         for (let obstacle of this.obstacles) {
             if (this.isColliding(playerBounds, obstacle.getBounds())) {
-                this.gameState.health--; // Decrease health
+                // Apply skin power bonuses to obstacle damage
+                let damage = 1;
+                damage = this.applySkinPowerBonuses(damage, 'damage');
+                
+                this.gameState.health -= damage;
                 
                 // Remove the obstacle so it doesn't keep hitting
                 const obstacleIndex = this.obstacles.indexOf(obstacle);
