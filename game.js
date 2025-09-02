@@ -1499,7 +1499,7 @@ class WittyYetiGame {
             
             console.log(`Skin: ${skinType}, Owned: ${this.gameState.ownedSkins.includes(skinType)}, SelectBtn: ${!!selectBtn}, BuyBtn: ${!!buyBtn}`);
             
-            if (this.gameState.ownedSkins.includes(skinType)) {
+            if (skinType === 'default' || this.gameState.ownedSkins.includes(skinType)) {
                 // User owns this skin - show select button
                 if (selectBtn) {
                     selectBtn.style.display = 'inline-block';
