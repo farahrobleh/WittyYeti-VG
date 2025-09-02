@@ -1205,7 +1205,49 @@ class WittyYetiGame {
         const container = document.getElementById('paypal-button-container');
         container.innerHTML = ''; // Clear existing buttons
         
-        // Show promotion message instead of payment buttons
+        if (window.paypal) {
+            paypal.Buttons({
+                createOrder: async (data, actions) => {
+                    // Show promotion dialog instead of creating order
+                    this.showPromotionDialog(skinType);
+                    return null; // No order created
+                },
+                
+                onApprove: async (data, actions) => {
+                    // This won't be called since no order is created
+                },
+                
+                onError: (err) => {
+                    // Show promotion dialog on any error
+                    this.showPromotionDialog(skinType);
+                },
+                
+                onCancel: (data) => {
+                    // Show promotion dialog on cancel
+                    this.showPromotionDialog(skinType);
+                }
+            }).render(container);
+        } else {
+            // Fallback if PayPal SDK not loaded
+            console.error('PayPal SDK not loaded!');
+            const fallbackBtn = document.createElement('button');
+            fallbackBtn.textContent = `Pay $${price.toFixed(2)} with PayPal`;
+            fallbackBtn.className = 'pay-btn';
+            fallbackBtn.onclick = () => this.showPromotionDialog(skinType);
+            container.appendChild(fallbackBtn);
+            
+            // Show error message
+            const errorMsg = document.createElement('p');
+            errorMsg.textContent = 'PayPal is currently unavailable. Please try again later.';
+            errorMsg.style.color = '#e74c3c';
+            errorMsg.style.textAlign = 'center';
+            errorMsg.style.marginTop = '10px';
+            container.appendChild(errorMsg);
+        }
+    }
+
+    showPromotionDialog(skinType) {
+        // Create promotion dialog
         const promotionDiv = document.createElement('div');
         promotionDiv.className = 'promotion-message';
         promotionDiv.innerHTML = `
