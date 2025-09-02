@@ -1276,8 +1276,7 @@ class WittyYetiGame {
             <div class="promotion-content">
                 <h3>🎉 LIMITED TIME OFFER!</h3>
                 <p>All Premium Skins Are <strong>100% FREE</strong></p>
-                <p class="promotion-subtitle">Robleh has stopped selling skins for money as of Sept. 3 2025 (video's complete, he got what he wanted out of this haha)!</p>
-                <p class="promotion-details">Going foward, as a treat to all the good folks at JLS Trading Co. (hi Johnny!), and all the gamers of the world, all premium skins are now completely free for all players. Happy playing!</p>
+                <p class="promotion-details">Robleh has stopped selling skins for money as of Sept. 3 2025 (video's complete, he got what he wanted out of this haha)! Going foward, as a treat to all the good folks at JLS Trading Co. (hi Johnny!), and all the gamers of the world, all premium skins are now completely free for all players. Happy playing!</p>
                 <button class="promotion-claim-btn">CLAIM FREE SKIN</button>
             </div>
         `;
