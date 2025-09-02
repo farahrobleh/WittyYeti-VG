@@ -995,6 +995,12 @@ class WittyYetiGame {
         this.player = new Player(this.canvas, this.assetManager);
         this.player.skinType = this.gameState.currentSkin; // Apply current skin
         
+        // Ensure pause button is in correct state
+        const pauseBtn = document.getElementById('pauseBtn');
+        if (pauseBtn) {
+            pauseBtn.textContent = 'PAUSE';
+        }
+        
         // Update UI
         this.updateUI();
         
@@ -1008,12 +1014,25 @@ class WittyYetiGame {
         if (this.gameState.gameOver) return;
         
         this.gameState.isPaused = !this.gameState.isPaused;
-        document.getElementById('pauseBtn').textContent = this.gameState.isPaused ? 'RESUME' : 'PAUSE';
+        
+        // Update button text immediately
+        const pauseBtn = document.getElementById('pauseBtn');
+        if (pauseBtn) {
+            pauseBtn.textContent = this.gameState.isPaused ? 'RESUME' : 'PAUSE';
+        }
+        
+        // Handle audio based on pause state
         if (this.gameState.isPaused) {
             this.audioManager.pauseMusic();
         } else {
-            this.audioManager.resumeMusic();
+            // Resume music only if we have current music and music is enabled
+            if (this.audioManager.currentMusic && this.audioManager.musicEnabled) {
+                this.audioManager.resumeMusic();
+            }
         }
+        
+        // Force UI update to ensure button text stays in sync
+        this.updateUI();
     }
 
     restartGame() {
@@ -1771,6 +1790,12 @@ class WittyYetiGame {
             const healthBar = document.getElementById('healthBar');
             if (healthBar) {
                 healthBar.style.width = `${(this.gameState.health / this.gameState.maxHealth) * 100}%`;
+            }
+            
+            // Always sync pause button text with game state
+            const pauseBtn = document.getElementById('pauseBtn');
+            if (pauseBtn) {
+                pauseBtn.textContent = this.gameState.isPaused ? 'RESUME' : 'PAUSE';
             }
         }
     }
