@@ -204,8 +204,13 @@ class AssetManager {
     }
 
     loadAllImages() {
-        // Character
-        this.loadImage('yeti', 'assets/images/character/yeti-runner.png');
+        // Character skins
+        this.loadImage('yeti-default', 'assets/images/character/yeti-runner.png');
+        this.loadImage('yeti-radioactive', 'assets/images/character/yeti-radioactive.png');
+        this.loadImage('yeti-ninja', 'assets/images/character/yeti-ninja.png');
+        this.loadImage('yeti-cosmic', 'assets/images/character/yeti-cosmic.png');
+        this.loadImage('yeti-royal', 'assets/images/character/yeti-royal.png');
+        this.loadImage('yeti-legendary', 'assets/images/character/yeti-legendary.png');
         
         // Enemies
         this.loadImage('karen', 'assets/images/enemies/karen-claus.png');
@@ -291,76 +296,23 @@ class Player {
     }
 
     draw() {
-        const yetiImage = this.assetManager.getImage('yeti');
+        // Get the appropriate skin image based on current skin type
+        const imageKey = `yeti-${this.skinType}`;
+        const yetiImage = this.assetManager.getImage(imageKey);
+        
         if (yetiImage && this.assetManager.allLoaded) {
-            this.ctx.save();
-            
-            // Debug: log current skin type
-            if (this.skinType !== 'default') {
-                console.log(`Drawing player with skin: ${this.skinType}`);
-            }
-            
-            // Draw the base image first
+            // Draw the skin-specific sprite directly
             this.ctx.drawImage(yetiImage, this.x, this.y, this.width, this.height);
             
-            // Apply skin-specific color overlay
-            switch(this.skinType) {
-                case 'radioactive':
-                    // Apply emerald green overlay for radioactive yeti
-                    this.ctx.globalCompositeOperation = 'multiply';
-                    this.ctx.fillStyle = 'rgba(0, 255, 0, 0.3)'; // Semi-transparent green
-                    this.ctx.fillRect(this.x, this.y, this.width, this.height);
-                    this.ctx.globalCompositeOperation = 'source-over';
-                    console.log('Applied radioactive green overlay');
-                    break;
-                case 'ninja':
-                    // Apply dark overlay for ninja yeti
-                    this.ctx.globalCompositeOperation = 'multiply';
-                    this.ctx.fillStyle = 'rgba(0, 0, 0, 0.4)'; // Semi-transparent black
-                    this.ctx.fillRect(this.x, this.y, this.width, this.height);
-                    this.ctx.globalCompositeOperation = 'source-over';
-                    break;
-                case 'cosmic':
-                    // Apply blue overlay for cosmic yeti
-                    this.ctx.globalCompositeOperation = 'multiply';
-                    this.ctx.fillStyle = 'rgba(0, 100, 255, 0.3)'; // Semi-transparent blue
-                    this.ctx.fillRect(this.x, this.y, this.width, this.height);
-                    this.ctx.globalCompositeOperation = 'source-over';
-                    break;
-                case 'royal':
-                    // Apply gold overlay for royal yeti
-                    this.ctx.globalCompositeOperation = 'multiply';
-                    this.ctx.fillStyle = 'rgba(255, 215, 0, 0.3)'; // Semi-transparent gold
-                    this.ctx.fillRect(this.x, this.y, this.width, this.height);
-                    this.ctx.globalCompositeOperation = 'source-over';
-                    break;
-                case 'legendary':
-                    // Apply purple overlay for legendary yeti
-                    this.ctx.globalCompositeOperation = 'multiply';
-                    this.ctx.fillStyle = 'rgba(128, 0, 128, 0.3)'; // Semi-transparent purple
-                    this.ctx.fillRect(this.x, this.y, this.width, this.height);
-                    this.ctx.globalCompositeOperation = 'source-over';
-                    break;
-                default:
-                    // No overlay for default skin
-                    console.log('No overlay applied for default skin');
-                    break;
+            if (this.skinType !== 'default') {
+                console.log(`Drawing ${this.skinType} yeti with image: ${imageKey}`);
             }
-            
-            // Restore the context
-            this.ctx.restore();
-            
-            // Filter applied, now drawing image
         } else {
             // Fallback to basic shape if image not loaded
             this.ctx.fillStyle = '#f0f0f0';
             this.ctx.fillRect(this.x, this.y, this.width, this.height);
+            console.warn(`Skin image not loaded: ${imageKey}`);
         }
-    }
-    
-    applyCSSFilterFallback() {
-        // This method is not needed - canvas filters should work
-        console.log('CSS filter fallback called but not needed');
     }
 
     getBounds() {
@@ -1240,20 +1192,10 @@ class WittyYetiGame {
         document.getElementById('modalSkinDescription').textContent = skinDescriptions[skinType];
         document.getElementById('modalSkinPrice').textContent = price.toFixed(2);
         
-        // Set skin image with filter
+        // Set skin image directly
         const skinImage = document.getElementById('modalSkinImage');
-        skinImage.src = 'assets/images/character/yeti-runner.png';
-        
-        // Map skin types to their correct filter classes
-        const skinFilters = {
-            'radioactive': 'emerald-filter', // Radioactive Yeti uses emerald filter
-            'ninja': 'ninja-filter',
-            'cosmic': 'cosmic-filter',
-            'royal': 'royal-filter',
-            'legendary': 'legendary-filter'
-        };
-        
-        skinImage.className = `modal-skin-img ${skinFilters[skinType] || ''}`;
+        skinImage.src = `assets/images/character/yeti-${skinType}.png`;
+        skinImage.className = 'modal-skin-img';
         
         // Show modal
         document.getElementById('paymentModal').classList.add('active');
