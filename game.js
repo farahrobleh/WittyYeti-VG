@@ -916,17 +916,8 @@ class WittyYetiGame {
         // Skins store event listeners
         this.setupSkinsStoreListeners();
         
-        document.getElementById('pauseBtn').addEventListener('click', () => {
-            this.togglePause();
-        });
-        
-        document.getElementById('restartBtn').addEventListener('click', () => {
-            this.restartGame();
-        });
-        
-        document.getElementById('gameBackToMenuBtn').addEventListener('click', () => {
-            this.showTitleScreen();
-        });
+        // Game control buttons - set up when game screen is shown
+        this.setupGameControlListeners();
         
         // Mute button event listeners
         document.getElementById('muteBtn').addEventListener('click', () => {
@@ -1080,6 +1071,39 @@ class WittyYetiGame {
     showHowToPlayScreen() {
         this.currentScreen = 'howToPlay';
         this.showScreen('howToPlay');
+    }
+
+    setupGameControlListeners() {
+        // Pause button
+        const pauseBtn = document.getElementById('pauseBtn');
+        if (pauseBtn) {
+            // Remove any existing listeners to prevent duplicates
+            pauseBtn.replaceWith(pauseBtn.cloneNode(true));
+            const newPauseBtn = document.getElementById('pauseBtn');
+            newPauseBtn.addEventListener('click', () => {
+                this.togglePause();
+            });
+        }
+        
+        // Restart button
+        const restartBtn = document.getElementById('restartBtn');
+        if (restartBtn) {
+            restartBtn.replaceWith(restartBtn.cloneNode(true));
+            const newRestartBtn = document.getElementById('restartBtn');
+            newRestartBtn.addEventListener('click', () => {
+                this.restartGame();
+            });
+        }
+        
+        // Back to menu button
+        const gameBackToMenuBtn = document.getElementById('gameBackToMenuBtn');
+        if (gameBackToMenuBtn) {
+            gameBackToMenuBtn.replaceWith(gameBackToMenuBtn.cloneNode(true));
+            const newGameBackToMenuBtn = document.getElementById('gameBackToMenuBtn');
+            newGameBackToMenuBtn.addEventListener('click', () => {
+                this.showTitleScreen();
+            });
+        }
     }
 
     setupSkinsStoreListeners() {
@@ -1762,6 +1786,8 @@ class WittyYetiGame {
         if (skinsSidebar) {
             if (screenName === 'game') {
                 skinsSidebar.classList.add('show');
+                // Set up game control listeners when game screen is shown
+                this.setupGameControlListeners();
             } else {
                 skinsSidebar.classList.remove('show');
             }
