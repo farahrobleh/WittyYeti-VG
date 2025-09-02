@@ -301,10 +301,12 @@ class Player {
             }
             
             // Apply skin filter based on skin type
+            console.log(`Attempting to apply filter for skin: ${this.skinType}`);
+            
             switch(this.skinType) {
                 case 'radioactive':
                     this.ctx.filter = 'sepia(1) hue-rotate(45deg) saturate(2) brightness(1.2)';
-                    console.log('Applied radioactive filter');
+                    console.log('Applied radioactive filter, filter value:', this.ctx.filter);
                     break;
                 case 'ninja':
                     this.ctx.filter = 'brightness(0.7) contrast(1.2) saturate(0.8)';
@@ -320,16 +322,27 @@ class Player {
                     break;
                 default:
                     // No filter for default skin
+                    console.log('No filter applied for default skin');
                     break;
             }
             
+            // Draw the image with the filter applied
             this.ctx.drawImage(yetiImage, this.x, this.y, this.width, this.height);
+            
+            // Restore the context after drawing
             this.ctx.restore();
+            
+            // Filter applied, now drawing image
         } else {
             // Fallback to basic shape if image not loaded
             this.ctx.fillStyle = '#f0f0f0';
             this.ctx.fillRect(this.x, this.y, this.width, this.height);
         }
+    }
+    
+    applyCSSFilterFallback() {
+        // This method is not needed - canvas filters should work
+        console.log('CSS filter fallback called but not needed');
     }
 
     getBounds() {
