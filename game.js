@@ -300,36 +300,54 @@ class Player {
                 console.log(`Drawing player with skin: ${this.skinType}`);
             }
             
-            // Apply skin filter based on skin type
-            console.log(`Attempting to apply filter for skin: ${this.skinType}`);
+            // Draw the base image first
+            this.ctx.drawImage(yetiImage, this.x, this.y, this.width, this.height);
             
+            // Apply skin-specific color overlay
             switch(this.skinType) {
                 case 'radioactive':
-                    this.ctx.filter = 'sepia(1) hue-rotate(45deg) saturate(2) brightness(1.2)';
-                    console.log('Applied radioactive filter, filter value:', this.ctx.filter);
+                    // Apply emerald green overlay for radioactive yeti
+                    this.ctx.globalCompositeOperation = 'multiply';
+                    this.ctx.fillStyle = 'rgba(0, 255, 0, 0.3)'; // Semi-transparent green
+                    this.ctx.fillRect(this.x, this.y, this.width, this.height);
+                    this.ctx.globalCompositeOperation = 'source-over';
+                    console.log('Applied radioactive green overlay');
                     break;
                 case 'ninja':
-                    this.ctx.filter = 'brightness(0.7) contrast(1.2) saturate(0.8)';
+                    // Apply dark overlay for ninja yeti
+                    this.ctx.globalCompositeOperation = 'multiply';
+                    this.ctx.fillStyle = 'rgba(0, 0, 0, 0.4)'; // Semi-transparent black
+                    this.ctx.fillRect(this.x, this.y, this.width, this.height);
+                    this.ctx.globalCompositeOperation = 'source-over';
                     break;
                 case 'cosmic':
-                    this.ctx.filter = 'hue-rotate(200deg) saturate(1.5) brightness(1.1)';
+                    // Apply blue overlay for cosmic yeti
+                    this.ctx.globalCompositeOperation = 'multiply';
+                    this.ctx.fillStyle = 'rgba(0, 100, 255, 0.3)'; // Semi-transparent blue
+                    this.ctx.fillRect(this.x, this.y, this.width, this.height);
+                    this.ctx.globalCompositeOperation = 'source-over';
                     break;
                 case 'royal':
-                    this.ctx.filter = 'sepia(0.5) hue-rotate(30deg) saturate(1.3) brightness(1.1)';
+                    // Apply gold overlay for royal yeti
+                    this.ctx.globalCompositeOperation = 'multiply';
+                    this.ctx.fillStyle = 'rgba(255, 215, 0, 0.3)'; // Semi-transparent gold
+                    this.ctx.fillRect(this.x, this.y, this.width, this.height);
+                    this.ctx.globalCompositeOperation = 'source-over';
                     break;
                 case 'legendary':
-                    this.ctx.filter = 'hue-rotate(280deg) saturate(2) brightness(1.3) contrast(1.2)';
+                    // Apply purple overlay for legendary yeti
+                    this.ctx.globalCompositeOperation = 'multiply';
+                    this.ctx.fillStyle = 'rgba(128, 0, 128, 0.3)'; // Semi-transparent purple
+                    this.ctx.fillRect(this.x, this.y, this.width, this.height);
+                    this.ctx.globalCompositeOperation = 'source-over';
                     break;
                 default:
-                    // No filter for default skin
-                    console.log('No filter applied for default skin');
+                    // No overlay for default skin
+                    console.log('No overlay applied for default skin');
                     break;
             }
             
-            // Draw the image with the filter applied
-            this.ctx.drawImage(yetiImage, this.x, this.y, this.width, this.height);
-            
-            // Restore the context after drawing
+            // Restore the context
             this.ctx.restore();
             
             // Filter applied, now drawing image
