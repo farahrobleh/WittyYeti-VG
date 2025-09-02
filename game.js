@@ -295,10 +295,16 @@ class Player {
         if (yetiImage && this.assetManager.allLoaded) {
             this.ctx.save();
             
+            // Debug: log current skin type
+            if (this.skinType !== 'default') {
+                console.log(`Drawing player with skin: ${this.skinType}`);
+            }
+            
             // Apply skin filter based on skin type
             switch(this.skinType) {
                 case 'radioactive':
                     this.ctx.filter = 'sepia(1) hue-rotate(45deg) saturate(2) brightness(1.2)';
+                    console.log('Applied radioactive filter');
                     break;
                 case 'ninja':
                     this.ctx.filter = 'brightness(0.7) contrast(1.2) saturate(0.8)';
@@ -1123,8 +1129,20 @@ class WittyYetiGame {
     }
 
     selectSkin(skinType) {
-        if (this.gameState.ownedSkins.includes(skinType)) {
+        console.log(`selectSkin called with: ${skinType}`);
+        console.log(`Current owned skins:`, this.gameState.ownedSkins);
+        
+        // Allow selection of any skin (default is always available)
+        if (skinType === 'default' || this.gameState.ownedSkins.includes(skinType)) {
+            // Update game state first
             this.gameState.currentSkin = skinType;
+            console.log(`Game state current skin set to: ${skinType}`);
+            
+            // Update player appearance if in game
+            if (this.player) {
+                this.player.skinType = skinType;
+                console.log(`Player skin updated to: ${skinType}`);
+            }
             
             // Update UI for all skin cards
             const skinCards = document.querySelectorAll('.skin-card');
@@ -1133,7 +1151,7 @@ class WittyYetiGame {
                 const selectBtn = card.querySelector('.skin-select-btn');
                 const buyBtn = card.querySelector('.skin-buy-btn');
                 
-                if (this.gameState.ownedSkins.includes(cardSkinType)) {
+                if (cardSkinType === 'default' || this.gameState.ownedSkins.includes(cardSkinType)) {
                     // User owns this skin - show select button (never hide it)
                     if (selectBtn) selectBtn.style.display = 'inline-block';
                     if (buyBtn) buyBtn.style.display = 'none';
@@ -1142,9 +1160,11 @@ class WittyYetiGame {
                     if (cardSkinType === skinType) {
                         if (selectBtn) selectBtn.textContent = 'SELECTED';
                         if (selectBtn) selectBtn.classList.add('selected');
+                        console.log(`Set ${cardSkinType} to SELECTED`);
                     } else {
                         if (selectBtn) selectBtn.textContent = 'SELECT';
                         if (selectBtn) selectBtn.classList.remove('selected');
+                        console.log(`Set ${cardSkinType} to SELECT`);
                     }
                 } else {
                     // User doesn't own this skin - show buy button
@@ -1153,16 +1173,9 @@ class WittyYetiGame {
                 }
             });
             
-            // Update player appearance if in game
-            if (this.player) {
-                this.player.skinType = skinType;
-                console.log(`Player skin updated to: ${skinType}`);
-            }
-            
-            // Ensure game state and player skin are synchronized
-            this.gameState.currentSkin = skinType;
-            
-            console.log(`Skin selected: ${skinType}, Current skin: ${this.gameState.currentSkin}`);
+            console.log(`Skin selection complete. Current skin: ${this.gameState.currentSkin}, Player skin: ${this.player ? this.player.skinType : 'no player'}`);
+        } else {
+            console.log(`Cannot select skin ${skinType} - not owned`);
         }
     }
 
@@ -1946,16 +1959,23 @@ class WittyYetiGame {
         const currentSkin = this.gameState.currentSkin;
         let multiplier = 1.0;
         
+        // Debug: log skin power application
+        if (currentSkin !== 'default') {
+            console.log(`Applying skin powers for ${currentSkin}, type: ${type}, base value: ${value}`);
+        }
+        
         switch(currentSkin) {
             case 'radioactive': // Radioactive Yeti
                 if (type === 'damage') {
                     multiplier = 0.7; // 30% damage resistance (take 70% damage)
+                    console.log(`Radioactive Yeti: 30% damage resistance applied, multiplier: ${multiplier}`);
                 }
                 break;
             case 'ninja': // Shadow Ninja Yeti
                 if (type === 'damage') {
                     // 25% chance to avoid damage completely
                     if (Math.random() < 0.25) {
+                        console.log(`Ninja Yeti: 25% chance to avoid damage - SUCCESS!`);
                         return 0; // No damage taken
                     }
                 }
@@ -1963,26 +1983,36 @@ class WittyYetiGame {
             case 'cosmic': // Cosmic Yeti
                 if (type === 'score') {
                     multiplier = 1.2; // 20% score multiplier
+                    console.log(`Cosmic Yeti: 20% score multiplier applied, multiplier: ${multiplier}`);
                 }
                 break;
             case 'royal': // Royal Yeti
                 if (type === 'health') {
                     // Health regeneration happens in update loop
                     multiplier = 1.1; // 10% bonus
+                    console.log(`Royal Yeti: 10% health bonus applied, multiplier: ${multiplier}`);
                 }
                 break;
             case 'legendary': // Legendary Yeti
                 if (type === 'damage') {
                     multiplier = 0.5; // 50% damage resistance
+                    console.log(`Legendary Yeti: 50% damage resistance applied, multiplier: ${multiplier}`);
                 } else if (type === 'score') {
                     multiplier = 1.5; // 50% score multiplier
+                    console.log(`Legendary Yeti: 50% score multiplier applied, multiplier: ${multiplier}`);
                 } else if (type === 'health') {
                     multiplier = 1.5; // 50% health bonus
+                    console.log(`Legendary Yeti: 50% health bonus applied, multiplier: ${multiplier}`);
                 }
                 break;
         }
         
-        return Math.round(value * multiplier);
+        const finalValue = Math.round(value * multiplier);
+        if (currentSkin !== 'default' && finalValue !== value) {
+            console.log(`Skin power result: ${value} → ${finalValue} (${multiplier}x)`);
+        }
+        
+        return finalValue;
     }
 
     updateSkinPowers() {
@@ -2058,7 +2088,7 @@ class WittyYetiGame {
             // Ensure player skin is always synchronized with game state
             if (this.player.skinType !== this.gameState.currentSkin) {
                 this.player.skinType = this.gameState.currentSkin;
-                console.log(`Syncing player skin: ${this.gameState.currentSkin}`);
+                console.log(`Game loop syncing player skin: ${this.gameState.currentSkin} (was: ${this.player.skinType})`);
             }
             this.player.update();
         }
